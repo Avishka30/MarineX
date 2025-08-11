@@ -5,13 +5,17 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import lk.ijse.gdse.backend.service.CustomUserDetailsService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
+@Component
 public class JWTAuthFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
@@ -28,7 +32,6 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // Skip JWT validation for these public paths
         if (path.startsWith("/api/auth/")) {
             chain.doFilter(request, response);
             return;
@@ -36,27 +39,42 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
         String token = null;
 
-        if (request.getCookies() != null) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+            System.out.println("Token from Authorization header: " + token);
+        }
+
+        if (token == null && request.getCookies() != null) {
             token = Arrays.stream(request.getCookies())
                     .filter(c -> "token".equals(c.getName()))
                     .map(Cookie::getValue)
                     .findFirst()
                     .orElse(null);
+            System.out.println("Token from cookie: " + token);
         }
 
         if (token != null && jwtUtil.validateToken(token)
                 && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             String email = jwtUtil.extractSubject(token);
+            String role = jwtUtil.extractRole(token);
+            System.out.println("Valid token for email: " + email + ", role: " + role);
+
             var userDetails = userDetailsService.loadUserByUsername(email);
 
+            var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+
             var auth = new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities());
+                    userDetails, null, authorities);
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(auth);
+        } else {
+            System.out.println("No valid token found or already authenticated");
         }
 
         chain.doFilter(request, response);
     }
+
 }

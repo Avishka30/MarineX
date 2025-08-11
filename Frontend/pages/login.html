@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login - MarineX Harbor Management System</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3a5f, #2c5aa0);
+      color: #2c3e50;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .login-container {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    h2 {
+      margin-bottom: 1.5rem;
+      text-align: center;
+      color: #1e3a5f;
+    }
+
+    .btn-login {
+      background: linear-gradient(135deg, #0d6efd, #2c5aa0);
+      border: none;
+      padding: 1rem;
+      width: 100%;
+      border-radius: 15px;
+      font-weight: 600;
+      color: white;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-login:hover {
+      box-shadow: 0 10px 30px rgba(13, 110, 253, 0.4);
+      transform: translateY(-3px);
+    }
+
+    .alert {
+      margin-top: 1rem;
+    }
+
+    .register-link {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    .register-link a {
+      color: #0d6efd;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Sign In</h2>
+    <form id="loginForm" novalidate>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email address</label>
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          placeholder="name@example.com"
+          required
+        />
+        <div class="invalid-feedback">Please enter a valid email.</div>
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          placeholder="Password"
+          required
+        />
+        <div class="invalid-feedback">Password is required.</div>
+      </div>
+
+      <button type="submit" class="btn-login">Login</button>
+    </form>
+
+    <div id="loginAlert" class="alert alert-danger d-none" role="alert"></div>
+
+    <div class="register-link">
+      <p>Don't have an account? <a href="register.html">Register here</a></p>
+    </div>
+  </div>
+
+ <script>
+    const loginForm = document.getElementById("loginForm");
+    const loginAlert = document.getElementById("loginAlert");
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if (!loginForm.checkValidity()) {
+        loginForm.classList.add("was-validated");
+        return;
+      }
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      try {
+        const response = await fetch("http://localhost:8080/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+          // remove credentials: 'include' since we will handle token manually
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          // Save token in localStorage for future requests
+          localStorage.setItem("token", data.data.token);
+
+          const role = data.data.role;
+          if (role === "ADMIN") {
+            window.location.href = "admin-dashboard.html";
+          } else {
+            window.location.href = "agent-dashboard.html";
+          }
+        } else {
+          loginAlert.textContent = data.message || "Login failed.";
+          loginAlert.classList.remove("d-none");
+        }
+      } catch (error) {
+        console.error('Fetch error', error);
+        loginAlert.textContent = "Network error. Please try again later.";
+        loginAlert.classList.remove("d-none");
+      }
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

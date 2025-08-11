@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 public class JWTUtil {
@@ -20,10 +21,12 @@ public class JWTUtil {
         this.expirationMs = expirationMs;
     }
 
-    public String generateToken(String subject) {
+    public String generateToken(String subject, String role) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + expirationMs);
+
         return Jwts.builder()
+                .setClaims(Map.of("role", role))
                 .setSubject(subject)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
@@ -43,6 +46,11 @@ public class JWTUtil {
     public String extractSubject(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build()
                 .parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public String extractRole(String token) {
+        return (String) Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token).getBody().get("role");
     }
 
     public Date extractExpiration(String token) {

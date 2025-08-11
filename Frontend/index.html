@@ -270,6 +270,131 @@
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" fill="%23f8f9fa"/></svg>') no-repeat center bottom;
             background-size: cover;
         }
+
+        /* ------- */
+
+ /* Modal content styling */
+.modal-content {
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(30, 58, 95, 0.3);
+    border: none;
+    background: #fff;
+    padding: 1rem; /* reduced from 1.5rem */
+}
+
+/* Modal header */
+.modal-header {
+    border-bottom: none;
+    padding-bottom: 0;
+    justify-content: space-between;
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+    color: white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.modal-header .modal-title {
+    font-weight: 700;
+    font-size: 1.3rem; /* reduced from 1.8rem */
+}
+
+.modal-header .btn-close {
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+/* Modal body */
+.modal-body {
+    padding-top: 1rem; /* reduced from 1.5rem */
+    color: var(--text-dark);
+    font-family: Arial, sans-serif;
+}
+
+.modal-body h2 {
+    font-weight: 600;
+    margin-bottom: 0.8rem; /* reduced from 1rem */
+}
+
+/* Form labels */
+.modal-body label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.2rem; /* reduced from 0.3rem */
+    color: var(--primary-dark);
+}
+
+/* Inputs */
+.modal-body input[type="text"],
+.modal-body input[type="email"],
+.modal-body input[type="password"],
+.modal-body select {
+    width: 100%;
+    padding: 0.4rem 0.8rem; /* reduced padding */
+    border-radius: 10px; /* reduced from 15px */
+    border: 2px solid #e9ecef;
+    font-size: 0.9rem; /* reduced from 1rem */
+    margin-bottom: 0.8rem; /* reduced from 1.2rem */
+    transition: border-color 0.3s ease;
+}
+
+.modal-body input[type="text"]:focus,
+.modal-body input[type="email"]:focus,
+.modal-body input[type="password"]:focus,
+.modal-body select:focus {
+    border-color: var(--accent-blue);
+    outline: none;
+    box-shadow: 0 0 6px rgba(13, 110, 253, 0.3); /* slightly smaller shadow */
+}
+
+/* Role section select dropdown */
+#roleSection select {
+    cursor: pointer;
+}
+
+/* Submit button */
+.modal-body button[type="submit"] {
+    background: linear-gradient(135deg, var(--accent-blue), var(--primary-light));
+    border: none;
+    padding: 0.5rem 1.5rem; /* reduced padding */
+    font-weight: 700;
+    color: white;
+    font-size: 1rem; /* reduced from 1.1rem */
+    border-radius: 20px; /* reduced from 25px */
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.modal-body button[type="submit"]:hover {
+    background: #0b5ed7;
+    box-shadow: 0 6px 15px rgba(13, 110, 253, 0.4); /* reduced shadow */
+    transform: translateY(-1px); /* smaller movement */
+}
+
+/* Success message styling */
+#registerSuccess {
+    font-weight: 600;
+    font-size: 1rem; /* reduced from 1.1rem */
+    text-align: center;
+    border-radius: 12px; /* reduced */
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .modal-dialog {
+        max-width: 90%;
+    }
+    
+    .modal-header .modal-title {
+        font-size: 1.2rem; /* slightly smaller on mobile */
+    }
+}
+
     </style>
 </head>
 <body>
@@ -301,8 +426,11 @@
                     </li>
                 </ul>
                 <div class="d-flex">
-                    <button class="btn btn-signin me-2">Sign In</button>
-                   <a href="pages/register.html"><button class="btn btn-register">Register</button></a>
+                   <a href="pages/login.html"><button class="btn btn-signin me-2">Sign In</button></a>
+                   <!-- <a href="pages/register.html"><button class="btn btn-register">Register</button></a> -->
+                    <button type="button" class="btn btn-register" data-bs-toggle="modal" data-bs-target="#registerModal">
+                        Register
+                    </button>
                 </div>
             </div>
         </div>
@@ -345,6 +473,53 @@
             </div>
         </div>
     </section>
+
+    <!-- ------------------- -->
+
+    <!-- Register Modal -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="registerModalLabel">Create Your Account</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+         <h2>User Registration</h2>
+    <form id="registerForm">
+        <label>Full Name:</label>
+        <input type="text" id="fullName" required><br><br>
+
+        <label>Email:</label>
+        <input type="email" id="email" required><br><br>
+
+        <label>Password:</label>
+        <input type="password" id="password" required><br><br>
+
+        <label>License Code:</label>
+        <input type="text" id="licenseCode"><br><br>
+
+        <div id="roleSection">
+            <label>Role:</label>
+            <select id="role">
+                <option value="ADMIN">Admin</option>
+                <option value="AGENT">Agent</option>
+            </select><br><br>
+        </div>
+
+        <button type="submit">Register</button>
+    </form>
+
+          <!-- <button type="submit" class="btn btn-primary">Register</button> -->
+        </form>
+        <div id="registerSuccess" class="alert alert-success mt-3 d-none">
+          Registered successfully! You can close this popup.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
     <!-- Services Section -->
     <section id="services" class="services">
@@ -521,6 +696,55 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
+
+         //------------------------
+          const API_BASE = "http://localhost:8080/api/auth";
+
+        let isAdminExists = false;
+
+        // Check if admin already exists
+        fetch(`${API_BASE}/admin-exists`)
+            .then(res => res.json())
+            .then(data => {
+                isAdminExists = data;
+                if (isAdminExists) {
+                    document.getElementById("roleSection").style.display = "none";
+                }
+            })
+            .catch(err => console.error("Error checking admin:", err));
+
+        // Handle form submission
+        document.getElementById("registerForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const userData = {
+                fullName: document.getElementById("fullName").value,
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value,
+                licenseCode: document.getElementById("licenseCode").value
+            };
+
+            // Decide endpoint based on admin existence
+            let endpoint = isAdminExists ? `${API_BASE}/register-agent` : `${API_BASE}/register-admin`;
+
+            fetch(endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(userData)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("User registered successfully!");
+                        window.location.href = "index.html"; // Redirect 
+                    } else {
+                        alert("Error: " + (data.message || "Registration failed"));
+                    }
+                })
+                .catch(err => console.error("Registration error:", err));
+        });
+
+
         // Initialize AOS (Animate On Scroll)
         AOS.init({
             duration: 1000,
@@ -638,6 +862,8 @@
                 }
             });
         });
+
+
     </script>
 </body>
 </html>

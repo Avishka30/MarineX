@@ -1,6 +1,5 @@
 package lk.ijse.gdse.backend.service;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lk.ijse.gdse.backend.dto.ApiResponse;
 import lk.ijse.gdse.backend.dto.AuthDTO;
@@ -11,6 +10,7 @@ import lk.ijse.gdse.backend.entity.Status;
 import lk.ijse.gdse.backend.entity.User;
 import lk.ijse.gdse.backend.repository.UserRepository;
 import lk.ijse.gdse.backend.util.JWTUtil;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +47,6 @@ public class AuthService {
 
         return ApiResponse.ok("Agent registered. Waiting for admin approval.", null);
     }
-
     public ApiResponse<AuthResponseDTO> login(AuthDTO dto, HttpServletResponse response) {
         var user = userRepo.findByEmail(dto.getEmail()).orElse(null);
         if (user == null || !passwordEncoder.matches(dto.getPassword(), user.getPasswordHash())) {
@@ -57,26 +56,28 @@ public class AuthService {
             return ApiResponse.fail("Account not active. Current status: " + user.getStatus());
         }
 
-        String token = jwtUtil.generateToken(user.getEmail());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
 
-        Cookie cookie = new Cookie("token", token);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge((int)((jwtUtil.extractExpiration(token).getTime() - System.currentTimeMillis()) / 1000));
-        // cookie.setSecure(true) in prod with HTTPS
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from("token", token)
+                .httpOnly(true)
+                .secure(false) // true in production with HTTPS
+                .path("/")
+                .maxAge((jwtUtil.extractExpiration(token).getTime() - System.currentTimeMillis()) / 1000)
+                .sameSite("Lax") // "None" + secure(true) for cross-site
+                .build();
 
-        return ApiResponse.ok("Login successful",
-                new AuthResponseDTO(token, user.getFullName(), "Login successful"));
+        response.addHeader("Set-Cookie", cookie.toString());
+
+        // **Set token here in the DTO so it goes in the response JSON**
+        AuthResponseDTO payload = new AuthResponseDTO(token, user.getFullName(), user.getRole().name(), "Login successful");
+        return ApiResponse.ok("Login successful", payload);
     }
+
     public ApiResponse<?> registerAdmin(RegisterDTO dto) {
-        // Check if any admin exists
         long adminCount = userRepo.countByRole(Role.ADMIN);
         if (adminCount > 0) {
             return ApiResponse.fail("Admin registration closed. Admin already exists.");
         }
-
-        // Check if email exists
         if (userRepo.existsByEmail(dto.getEmail())) {
             return ApiResponse.fail("Email already exists");
         }
@@ -93,13 +94,14 @@ public class AuthService {
         return ApiResponse.ok("First admin registered successfully", null);
     }
 
-
     public void logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("token", "");
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from("token", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 }
-
