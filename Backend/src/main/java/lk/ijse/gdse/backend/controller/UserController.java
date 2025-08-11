@@ -12,14 +12,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "*")
 @RestController
-
 @RequestMapping("/api/auth")
 public class UserController {
     private final AuthService authService;
-
-    public UserController(AuthService authService) {
+    private final UserRepository userRepo;
+    
+    public UserController(AuthService authService, UserRepository userRepo) {
         this.authService = authService;
+        this.userRepo = userRepo;
     }
 
     @PostMapping("/register-agent")
@@ -41,11 +43,11 @@ public class UserController {
         return ResponseEntity.status(resp.isSuccess() ? 200 : 401).body(resp);
     }
 
-   /* @GetMapping("/admin-exists")
+    @GetMapping("/admin-exists")
     public ResponseEntity<Boolean> adminExists() {
         boolean exists = userRepo.countByRole(Role.ADMIN) > 0;
         return ResponseEntity.ok(exists);
-    }*/
+    }
 
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<?>> logout(HttpServletResponse response) {
