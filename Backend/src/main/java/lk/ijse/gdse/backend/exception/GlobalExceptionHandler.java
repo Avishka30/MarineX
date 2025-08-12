@@ -4,7 +4,7 @@ import lk.ijse.gdse.backend.dto.ApiResponse;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
