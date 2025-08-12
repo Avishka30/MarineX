@@ -108,52 +108,47 @@
     </div>
   </div>
 
- <script>
-    const loginForm = document.getElementById("loginForm");
-    const loginAlert = document.getElementById("loginAlert");
+<script>
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
 
-      if (!loginForm.checkValidity()) {
-        loginForm.classList.add("was-validated");
-        return;
-      }
-
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-
-      try {
-        const response = await fetch("http://localhost:8080/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-          // remove credentials: 'include' since we will handle token manually
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.success) {
-          // Save token in localStorage for future requests
-          localStorage.setItem("token", data.data.token);
-
-          const role = data.data.role;
-          if (role === "ADMIN") {
-            window.location.href = "admin-dashboard.html";
-          } else {
-            window.location.href = "agent-dashboard.html";
-          }
-        } else {
-          loginAlert.textContent = data.message || "Login failed.";
-          loginAlert.classList.remove("d-none");
-        }
-      } catch (error) {
-        console.error('Fetch error', error);
-        loginAlert.textContent = "Network error. Please try again later.";
-        loginAlert.classList.remove("d-none");
-      }
+  try {
+    const resp = await fetch('http://localhost:8080/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+      credentials: 'include'  // send and receive cookies cross-origin
     });
-  </script>
+
+    const data = await resp.json();
+
+    if (resp.ok && data.success) {
+      // Save token in sessionStorage for subsequent API calls
+      sessionStorage.setItem('token', data.data.token);
+
+      // Redirect based on role after successful login.
+      if (data.data.role === 'ADMIN') {
+        window.location.href = 'admin-dashboard.html';
+      } else {
+        window.location.href = 'agent-dashboard.html';
+      }
+    } else {
+      loginAlert.textContent = data.message || 'Login failed';
+      loginAlert.classList.remove('d-none');
+    }
+  } catch (err) {
+    loginAlert.textContent = 'Network error';
+    loginAlert.classList.remove('d-none');
+  }
+});
+
+
+</script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

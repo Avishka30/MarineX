@@ -6,12 +6,6 @@
   <title>Admin Dashboard - MarineX</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
   <style>
-    body, .container {
-      display: none; /* Hide all by default */
-    }
-    body.show, .container.show {
-      display: block; /* Show after auth */
-    }
     body {
       font-family: Arial, sans-serif;
       background: linear-gradient(135deg, #1e3a5f, #2c5aa0);
@@ -54,81 +48,68 @@
   </style>
 </head>
 <body>
-  <div class="container" id="dashboardContainer">
+  <div class="container">
     <h1>Admin Dashboard</h1>
     <div id="message">Loading dashboard...</div>
     <button class="btn-logout" id="logoutBtn">Logout</button>
   </div>
 
-<script>
-  async function checkAdminAccess() {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("You are not logged in.");
-      window.location.href = "login.html";
-      return;
-    }
 
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <script>
+  // Check for token on page load
+  const token = sessionStorage.getItem('token');
+
+  if (!token) {
+    // Redirect to login if token missing
+    window.location.href = 'login.html';
+  } else {
+    // Token found, proceed with fetching admin data
+    fetchAdminData();
+  }
+
+  async function fetchAdminData() {
     try {
-      const response = await fetch("http://localhost:8080/admin/test", {
-        method: "GET",
+      const response = await fetch('http://localhost:8080/admin/test', {
+        method: 'GET',
         headers: {
-          "Authorization": `Bearer ${token}`
-        }
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include' // include cookies if any
       });
 
-      if (response.status === 401 || response.status === 403) {
-        alert("Access denied. Please login as admin.");
-        localStorage.removeItem("token");
-        window.location.href = "login.html";
+      if (response.status === 403) {
+        // Forbidden - token might be invalid/expired
+        alert('Session expired or unauthorized. Please login again.');
+        logout();
         return;
       }
 
       if (!response.ok) {
-        throw new Error("Network or server error");
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      const text = await response.text();
+      const data = await response.text(); // Or json() if your endpoint returns JSON
+      console.log('Admin test data:', data);
 
-      // Show page content after successful auth
-      document.body.classList.add('show');
-      document.getElementById("dashboardContainer").classList.add('show');
-      document.getElementById("message").textContent = text;
+      // Display or use data on page here
 
-    } catch (err) {
-      alert("Error loading dashboard. Redirecting to login.");
-      console.error(err);
-      window.location.href = "login.html";
+    } catch (error) {
+      console.error('Fetch error:', error);
+      alert('Error fetching admin data. Please login again.');
+      logout();
     }
   }
 
-  document.getElementById("logoutBtn").addEventListener("click", async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      window.location.href = "login.html";
-      return;
-    }
-    try {
-      const resp = await fetch("http://localhost:8080/api/auth/logout", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      if (resp.ok) {
-        localStorage.removeItem("token");
-        window.location.href = "login.html";
-      } else {
-        alert("Logout failed");
-      }
-    } catch (error) {
-      alert("Logout error");
-    }
-  });
-
-  // Run auth check immediately on page load
-  checkAdminAccess();
+  // Logout function to clear session and redirect
+  function logout() {
+    sessionStorage.removeItem('token');
+    window.location.href = 'login.html';
+  }
 </script>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>

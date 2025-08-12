@@ -39,12 +39,14 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
         String token = null;
 
+        // 1) Authorization header (Bearer ...)
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
             System.out.println("Token from Authorization header: " + token);
         }
 
+        // 2) Cookie fallback
         if (token == null && request.getCookies() != null) {
             token = Arrays.stream(request.getCookies())
                     .filter(c -> "token".equals(c.getName()))
@@ -54,27 +56,30 @@ public class JWTAuthFilter extends OncePerRequestFilter {
             System.out.println("Token from cookie: " + token);
         }
 
-        if (token != null && jwtUtil.validateToken(token)
-                && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (token != null && jwtUtil.validateToken(token) &&
+                SecurityContextHolder.getContext().getAuthentication() == null) {
 
             String email = jwtUtil.extractSubject(token);
             String role = jwtUtil.extractRole(token);
-            System.out.println("Valid token for email: " + email + ", role: " + role);
+            System.out.printf("Valid token for email=%s role=%s%n", email, role);
 
             var userDetails = userDetailsService.loadUserByUsername(email);
 
             var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
 
-            var auth = new UsernamePasswordAuthenticationToken(
-                    userDetails, null, authorities);
+            var auth = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(auth);
         } else {
-            System.out.println("No valid token found or already authenticated");
+            // helpful debug
+            if (token == null) {
+                System.out.println("No token found in request (auth header or cookies).");
+            } else {
+                System.out.println("Token present but invalid or context already authenticated.");
+            }
         }
 
         chain.doFilter(request, response);
     }
-
 }

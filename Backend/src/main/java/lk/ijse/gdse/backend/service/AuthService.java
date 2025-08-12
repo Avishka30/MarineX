@@ -44,9 +44,9 @@ public class AuthService {
         user.setStatus(Status.PENDING);
 
         userRepo.save(user);
-
         return ApiResponse.ok("Agent registered. Waiting for admin approval.", null);
     }
+
     public ApiResponse<AuthResponseDTO> login(AuthDTO dto, HttpServletResponse response) {
         var user = userRepo.findByEmail(dto.getEmail()).orElse(null);
         if (user == null || !passwordEncoder.matches(dto.getPassword(), user.getPasswordHash())) {
@@ -58,17 +58,18 @@ public class AuthService {
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
 
+        long maxAgeSeconds = Math.max(0L, (jwtUtil.extractExpiration(token).getTime() - System.currentTimeMillis()) / 1000);
+
         ResponseCookie cookie = ResponseCookie.from("token", token)
                 .httpOnly(true)
-                .secure(false) // true in production with HTTPS
+                .secure(false)           // Must be false for localhost HTTP, true in HTTPS production
                 .path("/")
-                .maxAge((jwtUtil.extractExpiration(token).getTime() - System.currentTimeMillis()) / 1000)
-                .sameSite("Lax") // "None" + secure(true) for cross-site
+                .maxAge(maxAgeSeconds)
+                .sameSite("Lax")         // Changed from "None" to "Lax" for local dev
                 .build();
 
-        response.addHeader("Set-Cookie", cookie.toString());
+        response.setHeader("Set-Cookie", cookie.toString());
 
-        // **Set token here in the DTO so it goes in the response JSON**
         AuthResponseDTO payload = new AuthResponseDTO(token, user.getFullName(), user.getRole().name(), "Login successful");
         return ApiResponse.ok("Login successful", payload);
     }
@@ -87,7 +88,6 @@ public class AuthService {
         user.setEmail(dto.getEmail());
         user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
         user.setRole(Role.ADMIN);
-        user.setLicenseCode(null);
         user.setStatus(Status.ACTIVE);
 
         userRepo.save(user);
@@ -97,11 +97,11 @@ public class AuthService {
     public void logout(HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from("token", "")
                 .httpOnly(true)
-                .secure(false)
+                .secure(false)          // false for dev http
                 .path("/")
                 .maxAge(0)
-                .sameSite("Lax")
+                .sameSite("Lax")        // match login sameSite setting
                 .build();
-        response.addHeader("Set-Cookie", cookie.toString());
+        response.setHeader("Set-Cookie", cookie.toString());
     }
 }

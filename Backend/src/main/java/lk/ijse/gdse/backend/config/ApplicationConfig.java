@@ -1,3 +1,4 @@
+/*
 package lk.ijse.gdse.backend.config;
 
 import org.springframework.context.annotation.Bean;
@@ -12,3 +13,4 @@ public class ApplicationConfig {
         return new BCryptPasswordEncoder();
     }
 }
+*/

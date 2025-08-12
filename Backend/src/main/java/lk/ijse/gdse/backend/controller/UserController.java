@@ -8,7 +8,6 @@ import lk.ijse.gdse.backend.dto.RegisterDTO;
 import lk.ijse.gdse.backend.entity.Role;
 import lk.ijse.gdse.backend.repository.UserRepository;
 import lk.ijse.gdse.backend.service.AuthService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final AuthService authService;
     private final UserRepository userRepo;
-    
+
     public UserController(AuthService authService, UserRepository userRepo) {
         this.authService = authService;
         this.userRepo = userRepo;
@@ -34,7 +33,6 @@ public class UserController {
         var resp = authService.registerAdmin(dto);
         return ResponseEntity.status(resp.isSuccess() ? 200 : 400).body(resp);
     }
-
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponseDTO>> login(@RequestBody AuthDTO dto, HttpServletResponse response) {
@@ -53,4 +51,9 @@ public class UserController {
         authService.logout(response);
         return ResponseEntity.ok(ApiResponse.ok("Logged out", null));
     }
+    @GetMapping("/debug-cookies")
+    public String debugCookies(@CookieValue(value = "token", required = false) String token) {
+        return token == null ? "No token cookie" : "Token: " + token;
+    }
+
 }
