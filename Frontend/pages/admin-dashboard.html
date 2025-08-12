@@ -103,11 +103,24 @@
     }
   }
 
-  // Logout function to clear session and redirect
-  function logout() {
-    sessionStorage.removeItem('token');
-    window.location.href = 'login.html';
+const logoutBtn = document.getElementById('logoutBtn');
+
+logoutBtn.addEventListener('click', async () => {
+  try {
+    // Optionally call backend logout if you have session or server-side logout logic
+    await fetch('http://localhost:8080/api/auth/logout', { method: 'POST' });
+  } catch (err) {
+    console.error('Logout request error:', err);
   }
+
+  // Clear token from session storage
+  sessionStorage.removeItem('token');
+
+  // Redirect to index.html
+  window.location.href = '../index.html';
+
+});
+
 </script>
 
 

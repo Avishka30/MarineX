@@ -36,7 +36,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponseDTO>> login(@RequestBody AuthDTO dto, HttpServletResponse response) {
-        var resp = authService.login(dto, response);
+        var resp = authService.login(dto);
         return ResponseEntity.status(resp.isSuccess() ? 200 : 401).body(resp);
     }
 
@@ -50,10 +50,6 @@ public class UserController {
     public ResponseEntity<ApiResponse<?>> logout(HttpServletResponse response) {
         authService.logout(response);
         return ResponseEntity.ok(ApiResponse.ok("Logged out", null));
-    }
-    @GetMapping("/debug-cookies")
-    public String debugCookies(@CookieValue(value = "token", required = false) String token) {
-        return token == null ? "No token cookie" : "Token: " + token;
     }
 
 }

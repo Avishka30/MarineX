@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Agent Dashboard</title>
+</head>
+<body>
+  <h1>Agent Dashboard</h1>
+  <div id="message">Loading...</div>
+
+  <script>
+    const token = sessionStorage.getItem('token');
+
+    if (!token) {
+      // No token found, redirect to login page
+      window.location.href = 'login.html';
+    } else {
+      // Call backend with token
+      fetch('http://localhost:8080/agent/test', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include'
+      }).then(res => {
+        if (res.status === 403) {
+          alert('Unauthorized or session expired. Please login.');
+          window.location.href = 'login.html';
+          return;
+        }
+        if (!res.ok) throw new Error('HTTP error ' + res.status);
+        return res.json();
+      }).then(data => {
+        document.getElementById('message').textContent = data.message || 'Success';
+      }).catch(err => {
+        console.error(err);
+        alert('Error fetching data, please login again.');
+        window.location.href = 'login.html';
+      });
+    }
+  </script>
+</body>
+</html>

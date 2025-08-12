@@ -26,7 +26,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
-    @Override
+    /*@Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
@@ -81,5 +81,42 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         }
 
         chain.doFilter(request, response);
+    }*/
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
+
+        String path = request.getRequestURI();
+
+        if (path.startsWith("/api/auth/")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        String token = null;
+
+        // Only Authorization header (Bearer ...)
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        }
+
+        if (token != null && jwtUtil.validateToken(token) &&
+                SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            String email = jwtUtil.extractSubject(token);
+            String role = jwtUtil.extractRole(token);
+
+            var userDetails = userDetailsService.loadUserByUsername(email);
+            var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+
+            var auth = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+            auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        }
+
+        chain.doFilter(request, response);
     }
+
 }

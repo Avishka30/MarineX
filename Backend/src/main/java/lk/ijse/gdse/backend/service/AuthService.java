@@ -47,6 +47,7 @@ public class AuthService {
         return ApiResponse.ok("Agent registered. Waiting for admin approval.", null);
     }
 
+/*
     public ApiResponse<AuthResponseDTO> login(AuthDTO dto, HttpServletResponse response) {
         var user = userRepo.findByEmail(dto.getEmail()).orElse(null);
         if (user == null || !passwordEncoder.matches(dto.getPassword(), user.getPasswordHash())) {
@@ -73,6 +74,22 @@ public class AuthService {
         AuthResponseDTO payload = new AuthResponseDTO(token, user.getFullName(), user.getRole().name(), "Login successful");
         return ApiResponse.ok("Login successful", payload);
     }
+*/
+
+    public ApiResponse<AuthResponseDTO> login(AuthDTO dto) {
+        var user = userRepo.findByEmail(dto.getEmail()).orElse(null);
+        if (user == null || !passwordEncoder.matches(dto.getPassword(), user.getPasswordHash())) {
+            return ApiResponse.fail("Invalid credentials");
+        }
+        if (user.getStatus() != Status.ACTIVE) {
+            return ApiResponse.fail("Account not active. Current status: " + user.getStatus());
+        }
+
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+
+        AuthResponseDTO payload = new AuthResponseDTO(token, user.getFullName(), user.getRole().name(), "Login successful");
+        return ApiResponse.ok("Login successful", payload);
+    }
 
     public ApiResponse<?> registerAdmin(RegisterDTO dto) {
         long adminCount = userRepo.countByRole(Role.ADMIN);
@@ -95,13 +112,6 @@ public class AuthService {
     }
 
     public void logout(HttpServletResponse response) {
-        ResponseCookie cookie = ResponseCookie.from("token", "")
-                .httpOnly(true)
-                .secure(false)          // false for dev http
-                .path("/")
-                .maxAge(0)
-                .sameSite("Lax")        // match login sameSite setting
-                .build();
-        response.setHeader("Set-Cookie", cookie.toString());
+
     }
 }
