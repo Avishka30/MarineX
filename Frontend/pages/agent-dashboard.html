@@ -10,7 +10,8 @@
   <div id="message">Loading...</div>
 
   <script>
-    const token = sessionStorage.getItem('token');
+    // Get token from localStorage
+    const token = localStorage.getItem('token');
 
     if (!token) {
       // No token found, redirect to login page
@@ -20,22 +21,24 @@
       fetch('http://localhost:8080/agent/test', {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        credentials: 'include'
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       }).then(res => {
-        if (res.status === 403) {
+        if (res.status === 403 || res.status === 401) {
           alert('Unauthorized or session expired. Please login.');
+          localStorage.removeItem('token'); // Clear invalid token
           window.location.href = 'login.html';
           return;
         }
         if (!res.ok) throw new Error('HTTP error ' + res.status);
         return res.json();
       }).then(data => {
-        document.getElementById('message').textContent = data.message || 'Success';
+        document.getElementById('message').textContent = data.data || 'Success';
       }).catch(err => {
         console.error(err);
         alert('Error fetching data, please login again.');
+        localStorage.removeItem('token'); // Clear token on error
         window.location.href = 'login.html';
       });
     }

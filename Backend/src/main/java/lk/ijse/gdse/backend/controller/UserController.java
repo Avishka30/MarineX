@@ -8,20 +8,25 @@ import lk.ijse.gdse.backend.dto.RegisterDTO;
 import lk.ijse.gdse.backend.entity.Role;
 import lk.ijse.gdse.backend.repository.UserRepository;
 import lk.ijse.gdse.backend.service.AuthService;
+import lk.ijse.gdse.backend.util.JWTUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+
 public class UserController {
     private final AuthService authService;
     private final UserRepository userRepo;
+    private final JWTUtil jwtUtil;
 
-    public UserController(AuthService authService, UserRepository userRepo) {
+    public UserController(AuthService authService, UserRepository userRepo, JWTUtil jwtUtil) {
         this.authService = authService;
         this.userRepo = userRepo;
+        this.jwtUtil = jwtUtil;
     }
-
     @PostMapping("/register-agent")
     public ResponseEntity<ApiResponse<?>> registerAgent(@RequestBody RegisterDTO dto) {
         var resp = authService.registerAgent(dto);

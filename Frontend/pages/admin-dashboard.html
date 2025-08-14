@@ -54,76 +54,66 @@
     <button class="btn-logout" id="logoutBtn">Logout</button>
   </div>
 
-
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
   <script>
-  // Check for token on page load
-  const token = sessionStorage.getItem('token');
+  document.addEventListener("DOMContentLoaded", async () => {
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
 
-  if (!token) {
-    // Redirect to login if token missing
-    window.location.href = 'login.html';
-  } else {
-    // Token found, proceed with fetching admin data
-    fetchAdminData();
-  }
+    // Check if token exists and user is admin
+    if (!token || role !== 'ADMIN') {
+      window.location.href = 'login.html';
+      return;
+    }
 
-  async function fetchAdminData() {
     try {
       const response = await fetch('http://localhost:8080/admin/test', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        },
-        credentials: 'include' // include cookies if any
+        }
       });
 
-      if (response.status === 403) {
-        // Forbidden - token might be invalid/expired
-        alert('Session expired or unauthorized. Please login again.');
-        logout();
+      if (!response.ok) {
+        // Token invalid/expired or forbidden
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        window.location.href = 'login.html';
         return;
       }
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+      const data = await response.text(); // or response.json() if API returns JSON
+      document.getElementById("message").textContent = data;
 
-      const data = await response.text(); // Or json() if your endpoint returns JSON
-      console.log('Admin test data:', data);
-
-      // Display or use data on page here
-
-    } catch (error) {
-      console.error('Fetch error:', error);
-      alert('Error fetching admin data. Please login again.');
-      logout();
+    } catch (err) {
+      console.error("Error fetching admin data:", err);
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      window.location.href = 'login.html';
     }
-  }
+  });
 
-const logoutBtn = document.getElementById('logoutBtn');
+  // Logout logic
+  const logoutBtn = document.getElementById("logoutBtn");
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      await fetch('http://localhost:8080/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    } catch (err) {
+      console.error("Logout request failed:", err);
+    }
 
-logoutBtn.addEventListener('click', async () => {
-  try {
-    // Optionally call backend logout if you have session or server-side logout logic
-    await fetch('http://localhost:8080/api/auth/logout', { method: 'POST' });
-  } catch (err) {
-    console.error('Logout request error:', err);
-  }
+    // Clear localStorage and redirect
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    window.location.href = 'login.html';
+  });
+  </script>
 
-  // Clear token from session storage
-  sessionStorage.removeItem('token');
-
-  // Redirect to index.html
-  window.location.href = '../index.html';
-
-});
-
-</script>
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

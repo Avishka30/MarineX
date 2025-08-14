@@ -47,35 +47,6 @@ public class AuthService {
         return ApiResponse.ok("Agent registered. Waiting for admin approval.", null);
     }
 
-/*
-    public ApiResponse<AuthResponseDTO> login(AuthDTO dto, HttpServletResponse response) {
-        var user = userRepo.findByEmail(dto.getEmail()).orElse(null);
-        if (user == null || !passwordEncoder.matches(dto.getPassword(), user.getPasswordHash())) {
-            return ApiResponse.fail("Invalid credentials");
-        }
-        if (user.getStatus() != Status.ACTIVE) {
-            return ApiResponse.fail("Account not active. Current status: " + user.getStatus());
-        }
-
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
-
-        long maxAgeSeconds = Math.max(0L, (jwtUtil.extractExpiration(token).getTime() - System.currentTimeMillis()) / 1000);
-
-        ResponseCookie cookie = ResponseCookie.from("token", token)
-                .httpOnly(true)
-                .secure(false)           // Must be false for localhost HTTP, true in HTTPS production
-                .path("/")
-                .maxAge(maxAgeSeconds)
-                .sameSite("Lax")         // Changed from "None" to "Lax" for local dev
-                .build();
-
-        response.setHeader("Set-Cookie", cookie.toString());
-
-        AuthResponseDTO payload = new AuthResponseDTO(token, user.getFullName(), user.getRole().name(), "Login successful");
-        return ApiResponse.ok("Login successful", payload);
-    }
-*/
-
     public ApiResponse<AuthResponseDTO> login(AuthDTO dto) {
         var user = userRepo.findByEmail(dto.getEmail()).orElse(null);
         if (user == null || !passwordEncoder.matches(dto.getPassword(), user.getPasswordHash())) {

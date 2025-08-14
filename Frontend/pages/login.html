@@ -109,6 +109,9 @@
   </div>
 
 <script>
+const loginForm = document.getElementById('loginForm');
+const loginAlert = document.getElementById('loginAlert');
+
 loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -119,17 +122,18 @@ loginForm.addEventListener('submit', async (e) => {
     const resp = await fetch('http://localhost:8080/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-      credentials: 'include'  // send and receive cookies cross-origin
+      body: JSON.stringify({ email, password })
+      // no need for credentials since no cookies
     });
 
     const data = await resp.json();
 
     if (resp.ok && data.success) {
-      // Save token in sessionStorage for subsequent API calls
-      sessionStorage.setItem('token', data.data.token);
+      // Save token in localStorage instead of sessionStorage
+      localStorage.setItem('token', data.data.token);
+      localStorage.setItem('role', data.data.role);
 
-      // Redirect based on role after successful login.
+      // Redirect based on role after successful login
       if (data.data.role === 'ADMIN') {
         window.location.href = 'admin-dashboard.html';
       } else {
@@ -146,7 +150,11 @@ loginForm.addEventListener('submit', async (e) => {
 });
 
 
+
+
 </script>
+
+
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
