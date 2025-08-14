@@ -1,47 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Agent Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent Dashboard - MarineX</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3a5f, #2c5aa0);
+      color: white;
+      min-height: 100vh;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      background: rgba(0,0,0,0.6);
+      padding: 2rem;
+      border-radius: 20px;
+      max-width: 700px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    #message {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+    }
+    .btn-logout {
+      margin-top: 1rem;
+      background: #dc3545;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      color: white;
+      transition: background 0.3s ease;
+    }
+    .btn-logout:hover {
+      background: #bb2d3b;
+    }
+  </style>
 </head>
 <body>
-  <h1>Agent Dashboard</h1>
-  <div id="message">Loading...</div>
+  <div class="container">
+    <h1>Agent Dashboard</h1>
+    <div id="message">Loading dashboard...</div>
+    <button class="btn-logout" id="logoutBtn">Logout</button>
+  </div>
 
   <script>
-    // Get token from localStorage
+  document.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
 
-    if (!token) {
-      // No token found, redirect to login page
+    // Check if token exists and user is agent
+    if (!token || role !== 'AGENT') {
       window.location.href = 'login.html';
-    } else {
-      // Call backend with token
-      fetch('http://localhost:8080/agent/test', {
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:8080/agent/test', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
-      }).then(res => {
-        if (res.status === 403 || res.status === 401) {
-          alert('Unauthorized or session expired. Please login.');
-          localStorage.removeItem('token'); // Clear invalid token
-          window.location.href = 'login.html';
-          return;
-        }
-        if (!res.ok) throw new Error('HTTP error ' + res.status);
-        return res.json();
-      }).then(data => {
-        document.getElementById('message').textContent = data.data || 'Success';
-      }).catch(err => {
-        console.error(err);
-        alert('Error fetching data, please login again.');
-        localStorage.removeItem('token'); // Clear token on error
-        window.location.href = 'login.html';
       });
+
+      if (!response.ok) {
+        // Token invalid/expired or forbidden
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const data = await response.json();
+      document.getElementById("message").textContent = data.data || 'Success';
+
+    } catch (err) {
+      console.error("Error fetching agent data:", err);
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      window.location.href = 'login.html';
     }
+  });
+
+  // Logout logic
+  const logoutBtn = document.getElementById("logoutBtn");
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      await fetch('http://localhost:8080/api/auth/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+    } catch (err) {
+      console.error("Logout request failed:", err);
+    }
+
+    // Clear localStorage and redirect
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    window.location.href = 'login.html';
+  });
   </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
