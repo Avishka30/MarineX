@@ -135,9 +135,9 @@ loginForm.addEventListener('submit', async (e) => {
 
       // Redirect based on role after successful login
       if (data.data.role === 'ADMIN') {
-        window.location.href = 'admin-dashboard.html';
+        window.location.href = '/Frontend/pages/admin/admin-dashboard.html';
       } else {
-        window.location.href = 'agent-dashboard.html';
+        window.location.href = '/Frontend/pages/agent/agent-dashboard.html';
       }
     } else {
       loginAlert.textContent = data.message || 'Login failed';

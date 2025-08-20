@@ -30,6 +30,9 @@ public class User {
     @Column(nullable = false)
     private Status status;
 
+    @Column(name = "profile_image_url")
+    private String profileImageUrl; // Cloud URL
+
     // ===== Constructors =====
     public User() {
     }
@@ -41,6 +44,7 @@ public class User {
         this.role = role;
         this.licenseCode = licenseCode;
         this.status = status;
+        this.profileImageUrl = profileImageUrl;
     }
 
     // ===== Getters & Setters =====
@@ -91,5 +95,12 @@ public class User {
     }
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 }

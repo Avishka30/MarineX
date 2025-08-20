@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Agent Dashboard - MarineX</title>
+  <title>Admin Dashboard - MarineX</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
   <style>
     body {
@@ -49,7 +49,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>Agent Dashboard</h1>
+    <h1>Admin Dashboard</h1>
     <div id="message">Loading dashboard...</div>
     <button class="btn-logout" id="logoutBtn">Logout</button>
   </div>
@@ -59,14 +59,14 @@
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
 
-    // Check if token exists and user is agent
-    if (!token || role !== 'AGENT') {
+    // Check if token exists and user is admin
+    if (!token || role !== 'ADMIN') {
       window.location.href = 'login.html';
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:8080/agent/test', {
+      const response = await fetch('http://localhost:8080/admin/test', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -82,14 +82,14 @@
         return;
       }
 
-      const data = await response.json();
-      document.getElementById("message").textContent = data.data || 'Success';
+      const data = await response.text(); // or response.json() if API returns JSON
+      document.getElementById("message").textContent = data;
 
     } catch (err) {
-      console.error("Error fetching agent data:", err);
+      console.error("Error fetching admin data:", err);
       localStorage.removeItem('token');
       localStorage.removeItem('role');
-      window.location.href = 'login.html';
+      window.location.href = '/Frontend/pages/login.html';
     }
   });
 
@@ -99,7 +99,9 @@
     try {
       await fetch('http://localhost:8080/api/auth/logout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
     } catch (err) {
       console.error("Logout request failed:", err);
@@ -108,7 +110,7 @@
     // Clear localStorage and redirect
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-    window.location.href = 'login.html';
+    window.location.href = '/Frontend/pages/login.html';
   });
   </script>
 

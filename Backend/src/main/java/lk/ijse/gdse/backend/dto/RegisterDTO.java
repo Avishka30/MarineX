@@ -4,7 +4,8 @@ public class RegisterDTO {
     private String fullName;
     private String email;
     private String password;
-    private String licenseCode; // required for agents
+    private String licenseCode;   // required for agents
+    private String profileImageUrl;
 
     public RegisterDTO() {
     }
@@ -41,5 +42,11 @@ public class RegisterDTO {
 
     public void setLicenseCode(String licenseCode) {
         this.licenseCode = licenseCode;
+    }
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 }

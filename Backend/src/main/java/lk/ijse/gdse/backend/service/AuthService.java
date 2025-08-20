@@ -10,7 +10,6 @@ import lk.ijse.gdse.backend.entity.Status;
 import lk.ijse.gdse.backend.entity.User;
 import lk.ijse.gdse.backend.repository.UserRepository;
 import lk.ijse.gdse.backend.util.JWTUtil;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +41,9 @@ public class AuthService {
         user.setRole(Role.AGENT);
         user.setLicenseCode(dto.getLicenseCode());
         user.setStatus(Status.PENDING);
+
+        // profile picture initially null
+        user.setProfileImageUrl(null);
 
         userRepo.save(user);
         return ApiResponse.ok("Agent registered. Waiting for admin approval.", null);
@@ -77,6 +79,9 @@ public class AuthService {
         user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
         user.setRole(Role.ADMIN);
         user.setStatus(Status.ACTIVE);
+
+        // profile picture initially null
+        user.setProfileImageUrl(null);
 
         userRepo.save(user);
         return ApiResponse.ok("First admin registered successfully", null);
