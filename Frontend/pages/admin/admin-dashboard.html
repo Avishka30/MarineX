@@ -53,7 +53,9 @@
     <div id="message">Loading dashboard...</div>
     <button class="btn-logout" id="logoutBtn">Logout</button>
   </div>
+  <button class="btn btn-success approve-btn">Approve</button>
 
+  <div>
   <script>
   document.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem('token');
@@ -66,7 +68,7 @@
     }
 
     try {
-      const response = await fetch('http://localhost:8080/admin/test', {
+      const response = await fetch('http://localhost:8080/api/admin/test', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -78,7 +80,7 @@
         // Token invalid/expired or forbidden
         localStorage.removeItem('token');
         localStorage.removeItem('role');
-        window.location.href = 'login.html';
+        window.location.href = '/Frontend/pages/login.html';
         return;
       }
 
@@ -112,6 +114,47 @@
     localStorage.removeItem('role');
     window.location.href = '/Frontend/pages/login.html';
   });
+
+  // ==================test ===============
+  // Approve agent function
+async function approveAgent(agentId) {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("You are not logged in!");
+    window.location.href = "login.html";
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:8080/api/admin/agents/${agentId}/approve`, {
+      method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert("✅ Agent approved successfully!");
+      console.log("Response:", data);
+    } else {
+      alert("❌ Failed to approve agent: " + (data.message || "Unknown error"));
+    }
+  } catch (error) {
+    console.error("Error approving agent:", error);
+    alert("❌ Something went wrong!");
+  }
+}
+
+// Example: attach click listener to your button
+document.querySelector("button.approve-btn")?.addEventListener("click", () => {
+  const agentId = 2; // Replace with dynamic agentId (e.g. from table row)
+  approveAgent(agentId);
+});
+
   </script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

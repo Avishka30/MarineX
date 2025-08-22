@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/agent")
+@RequestMapping("/api/agent")
 public class AgentDashboardController {
 
     @GetMapping("/test")
