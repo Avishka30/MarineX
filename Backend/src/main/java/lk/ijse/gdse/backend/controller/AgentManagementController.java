@@ -1,15 +1,12 @@
-package lk.ijse.gdse.backend.controller.admin;
+package lk.ijse.gdse.backend.controller;
 
 import lk.ijse.gdse.backend.dto.ApiResponse;
 import lk.ijse.gdse.backend.service.AgentManagementService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/admin/agents")
-
 public class AgentManagementController {
 
     private final AgentManagementService agentService;
