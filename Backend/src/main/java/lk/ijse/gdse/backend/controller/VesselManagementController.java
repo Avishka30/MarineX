@@ -4,6 +4,7 @@ import lk.ijse.gdse.backend.dto.ApiResponse;
 import lk.ijse.gdse.backend.entity.Vessel;
 import lk.ijse.gdse.backend.service.VesselService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public class VesselManagementController {
 
     // ===== Add a new vessel =====
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Vessel>> addVessel(@RequestBody Vessel vessel) {
         ApiResponse<Vessel> response = vesselService.addVessel(vessel);
         return ResponseEntity.status(response.isSuccess() ? 201 : 400).body(response);
