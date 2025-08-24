@@ -22,12 +22,11 @@ public class Vessel {
     private VesselCategory category;
 
     @Column(nullable = false)
-    private String size; // can hold dimensions/tonnage as String
+    private String size;
 
     @Column(nullable = false)
     private String companyName;
 
-    // ===== Constructors =====
     public Vessel() {
     }
 
@@ -39,7 +38,6 @@ public class Vessel {
         this.companyName = companyName;
     }
 
-    // ===== Getters & Setters =====
     public Long getVesselId() {
         return vesselId;
     }

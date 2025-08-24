@@ -14,17 +14,15 @@ public class Berth {
     private String berthNumber;
 
     @Column(nullable = false)
-    private String capacity; // Example: "2000 tons" or numeric value as String
+    private String capacity;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BerthStatus status;
 
-    // ---- No-Args Constructor ----
     public Berth() {
     }
 
-    // ---- All-Args Constructor ----
     public Berth(Long berthId, String berthNumber, String capacity, BerthStatus status) {
         this.berthId = berthId;
         this.berthNumber = berthNumber;
@@ -32,7 +30,6 @@ public class Berth {
         this.status = status;
     }
 
-    // ---- Getters and Setters ----
     public Long getBerthId() {
         return berthId;
     }

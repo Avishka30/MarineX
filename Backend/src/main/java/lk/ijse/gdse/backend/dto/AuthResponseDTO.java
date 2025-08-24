@@ -1,9 +1,9 @@
 package lk.ijse.gdse.backend.dto;
 
 public class AuthResponseDTO {
-    private String token;     // optional (we set cookie, but keep token here if you want)
+    private String token;
     private String fullName;
-    private String role;      // ADDED: will be "ADMIN" or "AGENT"
+    private String role;
     private String message;
 
     public AuthResponseDTO() {}

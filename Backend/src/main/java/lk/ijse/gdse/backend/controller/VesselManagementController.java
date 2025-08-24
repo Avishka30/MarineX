@@ -1,10 +1,9 @@
 package lk.ijse.gdse.backend.controller;
 
+import lk.ijse.gdse.backend.dto.VesselDTO;
 import lk.ijse.gdse.backend.dto.ApiResponse;
-import lk.ijse.gdse.backend.entity.Vessel;
 import lk.ijse.gdse.backend.service.VesselService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,36 +18,33 @@ public class VesselManagementController {
         this.vesselService = vesselService;
     }
 
-    // ===== Get all vessels =====
+    // Get all
     @GetMapping
-    public ResponseEntity<List<Vessel>> getAllVessels() {
-        List<Vessel> vessels = vesselService.getAllVessels();
-        return ResponseEntity.ok(vessels);
+    public ResponseEntity<List<VesselDTO>> getAllVessels() {
+        return ResponseEntity.ok(vesselService.getAllVessels());
     }
 
-    // ===== Get vessel by ID =====
+    // Get vessel by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Vessel> getVesselById(@PathVariable Long id) {
-        Vessel vessel = vesselService.getVesselById(id);
-        return ResponseEntity.ok(vessel);
+    public ResponseEntity<VesselDTO> getVesselById(@PathVariable Long id) {
+        return ResponseEntity.ok(vesselService.getVesselById(id));
     }
 
-    // ===== Add a new vessel =====
+    // Add vessel
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Vessel>> addVessel(@RequestBody Vessel vessel) {
-        ApiResponse<Vessel> response = vesselService.addVessel(vessel);
+    public ResponseEntity<ApiResponse<VesselDTO>> addVessel(@RequestBody VesselDTO vesselDTO) {
+        ApiResponse<VesselDTO> response = vesselService.addVessel(vesselDTO);
         return ResponseEntity.status(response.isSuccess() ? 201 : 400).body(response);
     }
 
-    // ===== Update existing vessel =====
+    // Update vessel
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Vessel>> updateVessel(@PathVariable Long id, @RequestBody Vessel vessel) {
-        ApiResponse<Vessel> response = vesselService.updateVessel(id, vessel);
+    public ResponseEntity<ApiResponse<VesselDTO>> updateVessel(@PathVariable Long id, @RequestBody VesselDTO vesselDTO) {
+        ApiResponse<VesselDTO> response = vesselService.updateVessel(id, vesselDTO);
         return ResponseEntity.status(response.isSuccess() ? 200 : 400).body(response);
     }
 
-    // ===== Delete vessel =====
+    // Delete vessel
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteVessel(@PathVariable Long id) {
         ApiResponse<Void> response = vesselService.deleteVessel(id);

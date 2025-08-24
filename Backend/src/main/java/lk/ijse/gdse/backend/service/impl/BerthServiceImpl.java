@@ -1,12 +1,15 @@
 package lk.ijse.gdse.backend.service.impl;
 
 import lk.ijse.gdse.backend.dto.ApiResponse;
+import lk.ijse.gdse.backend.dto.BerthDTO;
 import lk.ijse.gdse.backend.entity.Berth;
+import lk.ijse.gdse.backend.entity.BerthStatus;
 import lk.ijse.gdse.backend.repository.BerthRepository;
 import lk.ijse.gdse.backend.service.BerthService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BerthServiceImpl implements BerthService {
@@ -17,32 +20,59 @@ public class BerthServiceImpl implements BerthService {
         this.berthRepository = berthRepository;
     }
 
-    @Override
-    public List<Berth> getAllBerths() {
-        return berthRepository.findAll();
+    private BerthDTO toDTO(Berth berth) {
+        return new BerthDTO(
+                berth.getBerthId(),
+                berth.getBerthNumber(),
+                berth.getCapacity(),
+                berth.getStatus().name()
+        );
+    }
+
+    private Berth toEntity(BerthDTO dto) {
+        BerthStatus status;
+        try {
+            status = BerthStatus.valueOf(dto.getStatus().toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new RuntimeException("Invalid berth status: " + dto.getStatus());
+        }
+
+        return new Berth(
+                dto.getBerthId(),
+                dto.getBerthNumber(),
+                dto.getCapacity(),
+                status
+        );
     }
 
     @Override
-    public Berth getBerthById(Long id) {
-        return berthRepository.findById(id)
+    public List<BerthDTO> getAllBerths() {
+        return berthRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public BerthDTO getBerthById(Long id) {
+        Berth berth = berthRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Berth not found with ID: " + id));
+        return toDTO(berth);
     }
 
     @Override
-    public ApiResponse<Berth> addBerth(Berth berth) {
-        Berth savedBerth = berthRepository.save(berth);
-        return new ApiResponse<>(true, "Berth added successfully", savedBerth);
+    public ApiResponse<BerthDTO> addBerth(BerthDTO berthDTO) {
+        Berth berth = toEntity(berthDTO);
+        Berth saved = berthRepository.save(berth);
+        return new ApiResponse<>(true, "Berth added successfully", toDTO(saved));
     }
 
     @Override
-    public ApiResponse<Berth> updateBerth(Long id, Berth berth) {
+    public ApiResponse<BerthDTO> updateBerth(Long id, BerthDTO berthDTO) {
         return berthRepository.findById(id)
-                .map(existingBerth -> {
-                    existingBerth.setBerthNumber(berth.getBerthNumber());
-                    existingBerth.setCapacity(berth.getCapacity());
-                    existingBerth.setStatus(berth.getStatus());
-                    Berth updated = berthRepository.save(existingBerth);
-                    return new ApiResponse<>(true, "Berth updated successfully", updated);
+                .map(existing -> {
+                    existing.setBerthNumber(berthDTO.getBerthNumber());
+                    existing.setCapacity(berthDTO.getCapacity());
+                    existing.setStatus(BerthStatus.valueOf(berthDTO.getStatus().toUpperCase()));
+                    Berth updated = berthRepository.save(existing);
+                    return new ApiResponse<>(true, "Berth updated successfully", toDTO(updated));
                 })
                 .orElseGet(() -> new ApiResponse<>(false, "Berth not found with ID: " + id, null));
     }
@@ -50,7 +80,7 @@ public class BerthServiceImpl implements BerthService {
     @Override
     public ApiResponse<Void> deleteBerth(Long id) {
         return berthRepository.findById(id)
-                .map(existingBerth -> {
+                .map(existing -> {
                     berthRepository.deleteById(id);
                     return new ApiResponse<Void>(true, "Berth deleted successfully", null);
                 })

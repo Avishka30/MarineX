@@ -1,24 +1,19 @@
 package lk.ijse.gdse.backend.service;
 
 import lk.ijse.gdse.backend.dto.ApiResponse;
-import lk.ijse.gdse.backend.entity.Berth;
+import lk.ijse.gdse.backend.dto.BerthDTO;
 
 import java.util.List;
 
 public interface BerthService {
 
-    // Get all berths
-    List<Berth> getAllBerths();
+    List<BerthDTO> getAllBerths();
 
-    // Get berth by ID
-    Berth getBerthById(Long id);
+    BerthDTO getBerthById(Long id);
 
-    // Add a new berth
-    ApiResponse<Berth> addBerth(Berth berth);
+    ApiResponse<BerthDTO> addBerth(BerthDTO berthDTO);
 
-    // Update existing berth
-    ApiResponse<Berth> updateBerth(Long id, Berth berth);
+    ApiResponse<BerthDTO> updateBerth(Long id, BerthDTO berthDTO);
 
-    // Delete a berth
     ApiResponse<Void> deleteBerth(Long id);
 }

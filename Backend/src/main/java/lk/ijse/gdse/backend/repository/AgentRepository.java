@@ -12,12 +12,9 @@ import java.util.Optional;
 @Repository
 public interface AgentRepository extends JpaRepository<User, Long> {
 
-    // Find all agents
     List<User> findByRole(Role role);
 
-    // Find active agents
     List<User> findByRoleAndStatus(Role role, Status status);
 
-    // Find agent by userId and role (fixed)
     Optional<User> findByUserIdAndRole(Long userId, Role role);
 }

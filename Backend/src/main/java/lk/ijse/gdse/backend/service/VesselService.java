@@ -1,24 +1,19 @@
 package lk.ijse.gdse.backend.service;
 
-import lk.ijse.gdse.backend.entity.Vessel;
+import lk.ijse.gdse.backend.dto.VesselDTO;
 import lk.ijse.gdse.backend.dto.ApiResponse;
 
 import java.util.List;
 
 public interface VesselService {
 
-    // Get all vessels
-    List<Vessel> getAllVessels();
+    List<VesselDTO> getAllVessels();
 
-    // Get vessel by ID
-    Vessel getVesselById(Long id);
+    VesselDTO getVesselById(Long id);
 
-    // Add a new vessel
-    ApiResponse<Vessel> addVessel(Vessel vessel);
+    ApiResponse<VesselDTO> addVessel(VesselDTO vesselDTO);
 
-    // Update existing vessel
-    ApiResponse<Vessel> updateVessel(Long id, Vessel vessel);
-
-    // Delete a vessel
+    ApiResponse<VesselDTO> updateVessel(Long id, VesselDTO vesselDTO);
+    
     ApiResponse<Void> deleteVessel(Long id);
 }

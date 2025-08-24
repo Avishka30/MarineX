@@ -10,7 +10,6 @@ public class RegisterDTO {
     public RegisterDTO() {
     }
 
-    // Getters and setters
 
     public String getFullName() {
         return fullName;

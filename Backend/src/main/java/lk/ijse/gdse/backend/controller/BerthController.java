@@ -1,7 +1,7 @@
 package lk.ijse.gdse.backend.controller;
 
 import lk.ijse.gdse.backend.dto.ApiResponse;
-import lk.ijse.gdse.backend.entity.Berth;
+import lk.ijse.gdse.backend.dto.BerthDTO;
 import lk.ijse.gdse.backend.service.BerthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,33 +19,31 @@ public class BerthController {
         this.berthService = berthService;
     }
 
-    // ✅ Get all berths
     @GetMapping
-    public ResponseEntity<List<Berth>> getAllBerths() {
+    public ResponseEntity<List<BerthDTO>> getAllBerths() {
         return ResponseEntity.ok(berthService.getAllBerths());
     }
 
-    // ✅ Get berth by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Berth> getBerthById(@PathVariable Long id) {
+    public ResponseEntity<BerthDTO> getBerthById(@PathVariable Long id) {
         return ResponseEntity.ok(berthService.getBerthById(id));
     }
 
-    // ✅ Add new berth
+    // Add berth
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Berth>> addBerth(@RequestBody Berth berth) {
-        return ResponseEntity.ok(berthService.addBerth(berth));
+    public ResponseEntity<ApiResponse<BerthDTO>> addBerth(@RequestBody BerthDTO berthDTO) {
+        return ResponseEntity.ok(berthService.addBerth(berthDTO));
     }
 
-    // ✅ Update berth
+    // Update berth
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Berth>> updateBerth(@PathVariable Long id, @RequestBody Berth berth) {
-        return ResponseEntity.ok(berthService.updateBerth(id, berth));
+    public ResponseEntity<ApiResponse<BerthDTO>> updateBerth(@PathVariable Long id, @RequestBody BerthDTO berthDTO) {
+        return ResponseEntity.ok(berthService.updateBerth(id, berthDTO));
     }
 
-    // ✅ Delete berth
+    // Delete berth
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteBerth(@PathVariable Long id) {
