@@ -10,6 +10,8 @@ import lk.ijse.gdse.backend.service.EmailService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class AgentManagementServiceImpl implements AgentManagementService {
 
@@ -62,4 +64,14 @@ public class AgentManagementServiceImpl implements AgentManagementService {
             return new ApiResponse<>(true, "Agent rejected successfully", null);
         }
     }
+    @Override
+    public ApiResponse<?> getAllPendingAgents() {
+        try {
+            List<User> pendingAgents = agentRepo.findByRoleAndStatus(Role.AGENT, Status.PENDING);
+            return new ApiResponse<>(true, "Pending agents fetched successfully", pendingAgents);
+        } catch (Exception e) {
+            return new ApiResponse<>(false, "Failed to fetch pending agents: " + e.getMessage(), null);
+        }
+    }
+
 }

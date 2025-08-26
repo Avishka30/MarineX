@@ -17,4 +17,5 @@ public interface AgentRepository extends JpaRepository<User, Long> {
     List<User> findByRoleAndStatus(Role role, Status status);
 
     Optional<User> findByUserIdAndRole(Long userId, Role role);
+
 }

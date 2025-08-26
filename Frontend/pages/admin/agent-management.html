@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarineX - Navbar & Sidebar Components</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* MarineX Navigation Styles */
+        :root {
+            --primary-dark: #1e3a5f;
+            --primary-light: #2c5aa0;
+            --secondary-gray: #f8f9fa;
+            --accent-blue: #0d6efd;
+            --text-dark: #2c3e50;
+            --text-light: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --white: #ffffff;
+            --sidebar-width: 280px;
+            --topnav-height: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--secondary-gray);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            height: var(--topnav-height);
+            z-index: 1030;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .btn-toggle-sidebar {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-toggle-sidebar:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .notification-bell {
+            color: white !important;
+            font-size: 1.2rem;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-profile {
+            color: white !important;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .notification-dropdown {
+            min-width: 300px;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            display: flex;
+            margin-top: var(--topnav-height);
+            min-height: calc(100vh - var(--topnav-height));
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+            color: white;
+            transition: all 0.3s ease;
+            position: fixed;
+            left: 0;
+            top: var(--topnav-height);
+            height: calc(100vh - var(--topnav-height));
+            overflow-y: auto;
+            z-index: 1020;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .brand-logo i {
+            margin-right: 0.5rem;
+            font-size: 1.8rem;
+        }
+
+        .sidebar.collapsed .brand-logo span {
+            display: none;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            margin: 0.2rem 1rem;
+            border-radius: 10px;
+        }
+
+        .sidebar-nav .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .sidebar-nav .nav-link.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .sidebar-nav .nav-link i {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .nav-link span {
+            display: none;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 70px;
+        }
+
+        /* Demo Content */
+        .demo-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Ensure sidebar is visible on desktop */
+        @media (min-width: 1201px) {
+            .sidebar {
+                transform: translateX(0);
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --sidebar-width: 100%;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .user-profile {
+                flex-direction: column;
+                font-size: 0.8rem;
+            }
+            
+            .notification-dropdown {
+                min-width: 280px;
+            }
+        }
+
+        /* Animation Effects */
+        .sidebar-nav .nav-link {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            left: -100%;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .sidebar-nav .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .btn-toggle-sidebar:active {
+            transform: scale(0.95);
+        }
+
+        .notification-bell:hover .notification-badge {
+            animation: pulse 0.6s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Scroll Bar Styling */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top top-nav">
+        <div class="container-fluid">
+            <button class="btn btn-toggle-sidebar me-3" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-anchor me-2"></i>MarineX Admin
+            </a>
+
+            <div class="navbar-nav ms-auto d-flex flex-row">
+                <div class="nav-item dropdown me-3">
+                    <a class="nav-link dropdown-toggle notification-bell" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end notification-dropdown">
+                        <li><h6 class="dropdown-header">Notifications</h6></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-ship me-2"></i>New vessel arrival</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Agent registration pending</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-calendar me-2"></i>Booking confirmation needed</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-center" href="#">View all notifications</a></li>
+                    </ul>
+                </div>
+
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle user-profile" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                        <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><circle cx='20' cy='20' r='20' fill='%232c5aa0'/><circle cx='20' cy='16' r='6' fill='white'/><path d='M20 24c-6 0-12 3-12 8v8h24v-8c0-5-6-8-12-8z' fill='white'/></svg>" alt="Admin" class="user-avatar">
+                        Admin User
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <i class="fas fa-anchor"></i>
+                    <span>MarineX</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-section="dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="agent-management">
+                            <i class="fas fa-users"></i>
+                            <span>Agent Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="berth-management">
+                            <i class="fas fa-ship"></i>
+                            <span>Berth Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="booking-management">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Booking Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="worker-management">
+                            <i class="fas fa-hard-hat"></i>
+                            <span>Worker Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="view-schedule">
+                            <i class="fas fa-clock"></i>
+                            <span>View Schedule</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="payment-details">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Payment Details</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <div class="container py-4">
+    <h2 class="mb-4">Pending Agents</h2>
+    <div class="row" id="agentCardsContainer">
+        <!-- Agent cards will be inserted here dynamically -->
+    </div>
+</div>
+        </main>
+    </div>
+
+    <!-- JavaScript for Navbar and Sidebar Functionality -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+        //fetch code 
+     const agentContainer = document.getElementById('agentCardsContainer');
+const token = localStorage.getItem('token'); // JWT token
+
+// Fetch all pending agents
+async function fetchPendingAgents() {
+    try {
+        const response = await fetch('http://localhost:8080/api/admin/agents/pending', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+        console.log('Fetched result:', result);
+
+        if (result.success && result.data.length > 0) {
+            renderAgents(result.data);
+        } else {
+            agentContainer.innerHTML = '<p class="text-muted">No pending agents found.</p>';
+        }
+    } catch (error) {
+        console.error('Error fetching agents:', error);
+        agentContainer.innerHTML = '<p class="text-danger">Failed to load agents.</p>';
+    }
+}
+
+// Render agent cards dynamically
+function renderAgents(agents) {
+    agentContainer.innerHTML = ''; // clear previous content
+
+    agents.forEach(agent => {
+        const card = document.createElement('div');
+        card.className = 'col-md-4 mb-4';
+        card.innerHTML = `
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <img src="${agent.profileImageUrl || 'https://via.placeholder.com/80'}" class="rounded-circle mb-3" width="80" height="80" alt="Profile">
+                    <h5 class="card-title">${agent.fullName}</h5>
+                    <p class="card-text text-muted">${agent.email}</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <button class="btn btn-success btn-approve" data-id="${agent.userId}">Approve</button>
+                        <button class="btn btn-danger btn-reject" data-id="${agent.userId}">Reject</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        agentContainer.appendChild(card);
+    });
+
+    // Attach button event listeners
+    document.querySelectorAll('.btn-approve').forEach(btn => {
+        btn.addEventListener('click', () => handleAgentAction(btn.dataset.id, 'approve'));
+    });
+    document.querySelectorAll('.btn-reject').forEach(btn => {
+        btn.addEventListener('click', () => handleAgentAction(btn.dataset.id, 'reject'));
+    });
+}
+
+// Approve or reject agent
+async function handleAgentAction(agentId, action) {
+    try {
+        const response = await fetch(`http://localhost:8080/api/admin/agents/${agentId}/${action}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            alert(`${action === 'approve' ? 'Approved' : 'Rejected'} successfully!`);
+            fetchPendingAgents(); // refresh list
+        } else {
+            alert(`Failed to ${action}: ${result.message}`);
+        }
+    } catch (error) {
+        console.error(`Error on ${action}:`, error);
+        alert(`Failed to ${action} agent.`);
+    }
+}
+
+// Load pending agents on page load
+document.addEventListener('DOMContentLoaded', fetchPendingAgents);
+        //======
+
+        // Sidebar Toggle Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+
+            sidebarToggle.addEventListener('click', function() {
+                if (window.innerWidth > 1200) {
+                    // Desktop: Collapse sidebar
+                    sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('expanded');
+                } else {
+                    // Mobile: Show/hide sidebar
+                    sidebar.classList.toggle('show');
+                }
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 1200) {
+                    sidebar.classList.remove('show');
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    mainContent.classList.remove('expanded');
+                }
+            });
+
+            // Navigation Link Active State
+            const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    
+                    // You can add navigation logic here
+                    const section = this.dataset.section;
+                    console.log('Navigating to:', section);
+                    
+                    // Example: You could redirect to different pages
+                    // window.location.href = section + '.html';
+                });
+            });
+
+            // Notification Badge Animation
+            const notificationBell = document.querySelector('.notification-bell');
+            if (notificationBell) {
+                notificationBell.addEventListener('click', function() {
+                    const badge = this.querySelector('.notification-badge');
+                    if (badge) {
+                        badge.style.animation = 'pulse 0.6s ease-in-out';
+                        setTimeout(() => {
+                            badge.style.animation = '';
+                        }, 600);
+                    }
+                });
+            }
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 1200) {
+                    if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                        sidebar.classList.remove('show');
+                    }
+                }
+            });
+        });
+
+        // Export navigation functions for use in other pages
+        window.MarineXNav = {
+            setActiveNavigation: function(sectionName) {
+                const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.dataset.section === sectionName) {
+                        link.classList.add('active');
+                    }
+                });
+            },
+            
+            updateNotificationCount: function(count) {
+                const badge = document.querySelector('.notification-badge');
+                if (badge) {
+                    badge.textContent = count;
+                    if (count === 0) {
+                        badge.style.display = 'none';
+                    } else {
+                        badge.style.display = 'flex';
+                    }
+                }
+            },
+            
+            toggleSidebar: function() {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('mainContent');
+                
+                if (window.innerWidth > 1200) {
+                    sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('expanded');
+                } else {
+                    sidebar.classList.toggle('show');
+                }
+            }
+        };
+    </script>
+</body>
+</html>

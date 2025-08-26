@@ -1,6 +1,9 @@
 package lk.ijse.gdse.backend.service;
 
 import lk.ijse.gdse.backend.dto.ApiResponse;
+import lk.ijse.gdse.backend.entity.User;
+
+import java.util.List;
 
 public interface AgentManagementService {
     /**
@@ -11,4 +14,6 @@ public interface AgentManagementService {
      * @return ApiResponse with success or error message
      */
     ApiResponse<?> approveAgent(Long usrId, boolean approve);
+
+    ApiResponse<?> getAllPendingAgents();
 }

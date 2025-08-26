@@ -27,4 +27,11 @@ public class AgentManagementController {
         return ResponseEntity.status(response.isSuccess() ? 200 : 400).body(response);
     }
 
+
+    // GET all pending agents
+    @GetMapping("/pending")
+    public ResponseEntity<ApiResponse<?>> getAllPendingAgents() {
+        ApiResponse<?> response = agentService.getAllPendingAgents();
+        return ResponseEntity.status(response.isSuccess() ? 200 : 400).body(response);
+    }
 }

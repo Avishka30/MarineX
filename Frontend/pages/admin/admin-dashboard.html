@@ -1,162 +1,242 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin Dashboard - MarineX</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #1e3a5f, #2c5aa0);
-      color: white;
-      min-height: 100vh;
-      padding: 2rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .container {
-      background: rgba(0,0,0,0.6);
-      padding: 2rem;
-      border-radius: 20px;
-      max-width: 700px;
-      width: 100%;
-      text-align: center;
-    }
-    h1 {
-      margin-bottom: 1rem;
-    }
-    #message {
-      font-size: 1.2rem;
-      margin-top: 1rem;
-    }
-    .btn-logout {
-      margin-top: 1rem;
-      background: #dc3545;
-      border: none;
-      padding: 0.5rem 1.5rem;
-      border-radius: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      color: white;
-      transition: background 0.3s ease;
-    }
-    .btn-logout:hover {
-      background: #bb2d3b;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - MarineX Harbor Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/Frontend/css/admin-dashboard.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Admin Dashboard</h1>
-    <div id="message">Loading dashboard...</div>
-    <button class="btn-logout" id="logoutBtn">Logout</button>
-  </div>
-  <button class="btn btn-success approve-btn">Approve</button>
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top top-nav">
+        <div class="container-fluid">
+            <button class="btn btn-toggle-sidebar me-3" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-anchor me-2"></i>MarineX Admin
+            </a>
 
-  <div>
-  <script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role');
+            <div class="navbar-nav ms-auto d-flex flex-row">
+                <div class="nav-item dropdown me-3">
+                    <a class="nav-link dropdown-toggle notification-bell" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end notification-dropdown">
+                        <li><h6 class="dropdown-header">Notifications</h6></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-ship me-2"></i>New vessel arrival</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Agent registration pending</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-calendar me-2"></i>Booking confirmation needed</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-center" href="#">View all notifications</a></li>
+                    </ul>
+                </div>
 
-    // Check if token exists and user is admin
-    if (!token || role !== 'ADMIN') {
-      window.location.href = 'login.html';
-      return;
-    }
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle user-profile" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                        <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><circle cx='20' cy='20' r='20' fill='%232c5aa0'/><circle cx='20' cy='16' r='6' fill='white'/><path d='M20 24c-6 0-12 3-12 8v8h24v-8c0-5-6-8-12-8z' fill='white'/></svg>" alt="Admin" class="user-avatar">
+                        Admin User
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-    try {
-      const response = await fetch('http://localhost:8080/api/admin/test', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <i class="fas fa-anchor"></i>
+                    <span>MarineX</span>
+                </div>
+            </div>
 
-      if (!response.ok) {
-        // Token invalid/expired or forbidden
-        localStorage.removeItem('token');
-        localStorage.removeItem('role');
-        window.location.href = '/Frontend/pages/login.html';
-        return;
-      }
+            <nav class="sidebar-nav">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Frontend/pages/admin/admin-dashboard.html" data-section="dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Frontend/pages/admin/agent-management.html" data-section="agent-management">
+                            <i class="fas fa-users"></i>
+                            <span>Agent Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Frontend/pages/admin/berth-management.html" data-section="berth-management">
+                            <i class="fas fa-ship"></i>
+                            <span>Berth Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="booking-management">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Booking Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="worker-management">
+                            <i class="fas fa-hard-hat"></i>
+                            <span>Worker Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="view-schedule">
+                            <i class="fas fa-clock"></i>
+                            <span>View Schedule</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="payment-details">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Payment Details</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
 
-      const data = await response.text(); // or response.json() if API returns JSON
-      document.getElementById("message").textContent = data;
+      
+        </aside>
 
-    } catch (err) {
-      console.error("Error fetching admin data:", err);
-      localStorage.removeItem('token');
-      localStorage.removeItem('role');
-      window.location.href = '/Frontend/pages/login.html';
-    }
-  });
 
-  // Logout logic
-  const logoutBtn = document.getElementById("logoutBtn");
-  logoutBtn.addEventListener("click", async () => {
-    try {
-      await fetch('http://localhost:8080/api/auth/logout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-    } catch (err) {
-      console.error("Logout request failed:", err);
-    }
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section active">
+                <div class="content-header">
+                    <h1>Dashboard Overview</h1>
+                    <p class="text-muted">Welcome back! Here's what's happening at your harbor today.</p>
+                </div>
 
-    // Clear localStorage and redirect
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    window.location.href = '/Frontend/pages/login.html';
-  });
+                <!-- Stats Cards -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="stats-icon agents">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stats-content">
+                                <div class="stats-number" data-target="45">0</div>
+                                <div class="stats-label">Active Agents</div>
+                                <div class="stats-change positive">
+                                    <i class="fas fa-arrow-up"></i> +12%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-  // ==================test ===============
-  // Approve agent function
-async function approveAgent(agentId) {
-  const token = localStorage.getItem("token");
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="stats-icon vessels">
+                                <i class="fas fa-ship"></i>
+                            </div>
+                            <div class="stats-content">
+                                <div class="stats-number" data-target="128">0</div>
+                                <div class="stats-label">Vessels Count</div>
+                                <div class="stats-change positive">
+                                    <i class="fas fa-arrow-up"></i> +8%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-  if (!token) {
-    alert("You are not logged in!");
-    window.location.href = "login.html";
-    return;
-  }
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="stats-icon bookings">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="stats-content">
+                                <div class="stats-number" data-target="23">0</div>
+                                <div class="stats-label">Upcoming Bookings</div>
+                                <div class="stats-change positive">
+                                    <i class="fas fa-arrow-up"></i> +15%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-  try {
-    const response = await fetch(`http://localhost:8080/api/admin/agents/${agentId}/approve`, {
-      method: "PUT",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
-    });
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="stats-icon revenue">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="stats-content">
+                                <div class="stats-number" data-target="187500">0</div>
+                                <div class="stats-label">Monthly Revenue</div>
+                                <div class="stats-change positive">
+                                    <i class="fas fa-arrow-up"></i> +22%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    const data = await response.json();
+                <!-- Charts and Quick Actions -->
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-chart-line me-2"></i>Harbor Activity Overview</h5>
+                                <div class="card-actions">
+                                    <button class="btn btn-sm btn-outline-primary">View Details</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="activityChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
 
-    if (response.ok) {
-      alert("✅ Agent approved successfully!");
-      console.log("Response:", data);
-    } else {
-      alert("❌ Failed to approve agent: " + (data.message || "Unknown error"));
-    }
-  } catch (error) {
-    console.error("Error approving agent:", error);
-    alert("❌ Something went wrong!");
-  }
-}
+                    <div class="col-lg-4">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-tasks me-2"></i>Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="quick-actions">
+                                    <a href="#" class="quick-action-btn" data-section="agent-management">
+                                        <i class="fas fa-user-plus"></i>
+                                        <span>Add New Agent</span>
+                                    </a>
+                                    <a href="#" class="quick-action-btn" data-section="berth-management">
+                                        <i class="fas fa-plus"></i>
+                                        <span>Create Berth</span>
+                                    </a>
+                                    <a href="#" class="quick-action-btn" data-section="booking-management">
+                                        <i class="fas fa-calendar-plus"></i>
+                                        <span>New Booking</span>
+                                    </a>
+                                    <a href="#" class="quick-action-btn" data-section="view-schedule">
+                                        <i class="fas fa-eye"></i>
+                                        <span>View Schedule</span>
+                                    </a>
+                                </div>
+                            </div>
+                          </div>
+                    </div>
+                </div>
+            </section>
 
-// Example: attach click listener to your button
-document.querySelector("button.approve-btn")?.addEventListener("click", () => {
-  const agentId = 2; // Replace with dynamic agentId (e.g. from table row)
-  approveAgent(agentId);
-});
+           
+        </main>
+    </div>
 
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="/Frontend/js/admin-dashboard.js"></script>
 </body>
 </html>
