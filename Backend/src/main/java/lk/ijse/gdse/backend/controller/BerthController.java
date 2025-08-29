@@ -29,21 +29,18 @@ public class BerthController {
         return ResponseEntity.ok(berthService.getBerthById(id));
     }
 
-    // Add berth
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<BerthDTO>> addBerth(@RequestBody BerthDTO berthDTO) {
         return ResponseEntity.ok(berthService.addBerth(berthDTO));
     }
 
-    // Update berth
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<BerthDTO>> updateBerth(@PathVariable Long id, @RequestBody BerthDTO berthDTO) {
         return ResponseEntity.ok(berthService.updateBerth(id, berthDTO));
     }
 
-    // Delete berth
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteBerth(@PathVariable Long id) {

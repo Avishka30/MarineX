@@ -1,57 +1,60 @@
 package lk.ijse.gdse.backend.controller;
 
+import lk.ijse.gdse.backend.dto.ApiResponse;
 import lk.ijse.gdse.backend.dto.ServicesDTO;
-import lk.ijse.gdse.backend.entity.Services;
 import lk.ijse.gdse.backend.service.ServiceManagementService;
-import lk.ijse.gdse.backend.util.APIResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/services")
-public class ServicesController {
+public class ServiceManagementController {
 
     private final ServiceManagementService serviceManagementService;
 
-    public ServicesController(ServiceManagementService serviceManagementService) {
+    public ServiceManagementController(ServiceManagementService serviceManagementService) {
         this.serviceManagementService = serviceManagementService;
     }
 
-    // Get all services
     @GetMapping
-    public ResponseEntity<APIResponse<List<ServicesDTO>>> getAllServices() {
+    public ResponseEntity<ApiResponse<List<ServicesDTO>>> getAllServices() {
         List<ServicesDTO> services = serviceManagementService.getAllServices();
-        return ResponseEntity.ok(new APIResponse<>(true, "All services retrieved", services));
+        return ResponseEntity.ok(new ApiResponse<>(true, "All services fetched", services));
     }
 
-    // Get service by ID
     @GetMapping("/{id}")
-    public ResponseEntity<APIResponse<ServicesDTO>> getServiceById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ServicesDTO>> getServiceById(@PathVariable Long id) {
         ServicesDTO service = serviceManagementService.getServiceById(id);
-        return ResponseEntity.ok(new APIResponse<>(true, "Service retrieved", service));
+        return ResponseEntity.ok(new ApiResponse<>(true, "Service fetched", service));
     }
 
-    // Add new service
     @PostMapping
-    public ResponseEntity<APIResponse<ServicesDTO>> addService(@RequestBody ServicesDTO serviceDTO) {
-        ServicesDTO createdService = serviceManagementService.addService(serviceDTO);
-        return new ResponseEntity<>(new APIResponse<>(true, "Service created", createdService), HttpStatus.CREATED);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<ServicesDTO>> createService(@RequestBody ServicesDTO dto) {
+        ServicesDTO created = serviceManagementService.createService(dto);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Service created successfully", created));
     }
 
-    // Update service
     @PutMapping("/{id}")
-    public ResponseEntity<APIResponse<ServicesDTO>> updateService(@PathVariable Long id, @RequestBody ServicesDTO serviceDTO) {
-        ServicesDTO updatedService = serviceManagementService.updateService(id, serviceDTO);
-        return ResponseEntity.ok(new APIResponse<>(true, "Service updated", updatedService));
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<ServicesDTO>> updateService(@PathVariable Long id, @RequestBody ServicesDTO dto) {
+        ServicesDTO updated = serviceManagementService.updateService(id, dto);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Service updated successfully", updated));
     }
 
-    // Delete service
     @DeleteMapping("/{id}")
-    public ResponseEntity<APIResponse<Void>> deleteService(@PathVariable Long id) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> deleteService(@PathVariable Long id) {
         serviceManagementService.deleteService(id);
-        return ResponseEntity.ok(new APIResponse<>(true, "Service deleted", null));
+        return ResponseEntity.ok(new ApiResponse<>(true, "Service deleted successfully", null));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<ServicesDTO>>> searchByName(@RequestParam String name) {
+        List<ServicesDTO> services = serviceManagementService.getServicesByName(name);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Search results fetched", services));
     }
 }

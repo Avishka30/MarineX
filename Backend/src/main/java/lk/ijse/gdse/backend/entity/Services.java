@@ -1,13 +1,12 @@
 package lk.ijse.gdse.backend.entity;
 
 import jakarta.persistence.*;
-import lk.ijse.gdse.backend.entity.BookingService;
 
 import java.util.List;
 
 @Entity
 @Table(name = "service")
-public class Service {
+public class Services {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,9 +20,9 @@ public class Service {
     private List<BookingService> bookingServices;
 
     // Constructors
-    public Service() {}
+    public Services() {}
 
-    public Service(Long serviceId, String name, String description, Double price, List<BookingService> bookingServices) {
+    public Services(Long serviceId, String name, String description, Double price, List<BookingService> bookingServices) {
         this.serviceId = serviceId;
         this.name = name;
         this.description = description;

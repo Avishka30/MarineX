@@ -1,6 +1,7 @@
 package lk.ijse.gdse.backend.entity;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "berths")
@@ -20,14 +21,18 @@ public class Berth {
     @Column(nullable = false)
     private BerthStatus status;
 
+    @Column(nullable = false, precision = 10, scale = 2) // Example: 99999999.99
+    private BigDecimal price;
+
     public Berth() {
     }
 
-    public Berth(Long berthId, String berthNumber, String capacity, BerthStatus status) {
+    public Berth(Long berthId, String berthNumber, String capacity, BerthStatus status, BigDecimal price) {
         this.berthId = berthId;
         this.berthNumber = berthNumber;
         this.capacity = capacity;
         this.status = status;
+        this.price = price;
     }
 
     public Long getBerthId() {
@@ -60,5 +65,13 @@ public class Berth {
 
     public void setStatus(BerthStatus status) {
         this.status = status;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }

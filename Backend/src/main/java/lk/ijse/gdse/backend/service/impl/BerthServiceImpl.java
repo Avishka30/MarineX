@@ -25,7 +25,8 @@ public class BerthServiceImpl implements BerthService {
                 berth.getBerthId(),
                 berth.getBerthNumber(),
                 berth.getCapacity(),
-                berth.getStatus().name()
+                berth.getStatus().name(),
+                berth.getPrice() // map price
         );
     }
 
@@ -37,17 +38,20 @@ public class BerthServiceImpl implements BerthService {
             throw new RuntimeException("Invalid berth status: " + dto.getStatus());
         }
 
-        return new Berth(
-                dto.getBerthId(),
-                dto.getBerthNumber(),
-                dto.getCapacity(),
-                status
-        );
+        Berth berth = new Berth();
+        berth.setBerthId(dto.getBerthId());
+        berth.setBerthNumber(dto.getBerthNumber());
+        berth.setCapacity(dto.getCapacity());
+        berth.setStatus(status);
+        berth.setPrice(dto.getPrice()); // set price
+        return berth;
     }
 
     @Override
     public List<BerthDTO> getAllBerths() {
-        return berthRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+        return berthRepository.findAll().stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -71,6 +75,7 @@ public class BerthServiceImpl implements BerthService {
                     existing.setBerthNumber(berthDTO.getBerthNumber());
                     existing.setCapacity(berthDTO.getCapacity());
                     existing.setStatus(BerthStatus.valueOf(berthDTO.getStatus().toUpperCase()));
+                    existing.setPrice(berthDTO.getPrice()); // update price
                     Berth updated = berthRepository.save(existing);
                     return new ApiResponse<>(true, "Berth updated successfully", toDTO(updated));
                 })
