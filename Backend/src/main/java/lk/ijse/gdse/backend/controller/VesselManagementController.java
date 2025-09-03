@@ -30,7 +30,7 @@ public class VesselManagementController {
     public ResponseEntity<VesselDTO> getVesselById(@PathVariable Long id) {
         return ResponseEntity.ok(vesselService.getVesselById(id));
     }
-    
+
     @GetMapping("/agent/{agentId}")
     public ResponseEntity<List<VesselDTO>> getVesselsByAgent(@PathVariable Long agentId) {
         return ResponseEntity.ok(vesselService.getVesselsByAgent(agentId));
