@@ -3,6 +3,7 @@ package lk.ijse.gdse.backend.controller;
 import lk.ijse.gdse.backend.dto.VesselDTO;
 import lk.ijse.gdse.backend.dto.ApiResponse;
 import lk.ijse.gdse.backend.service.VesselService;
+import lk.ijse.gdse.backend.util.JWTUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ public class VesselManagementController {
 
     private final VesselService vesselService;
 
-    public VesselManagementController(VesselService vesselService) {
+    public VesselManagementController(VesselService vesselService, JWTUtil jwtUtil) {
         this.vesselService = vesselService;
     }
 
@@ -28,6 +29,11 @@ public class VesselManagementController {
     @GetMapping("/{id}")
     public ResponseEntity<VesselDTO> getVesselById(@PathVariable Long id) {
         return ResponseEntity.ok(vesselService.getVesselById(id));
+    }
+    
+    @GetMapping("/agent/{agentId}")
+    public ResponseEntity<List<VesselDTO>> getVesselsByAgent(@PathVariable Long agentId) {
+        return ResponseEntity.ok(vesselService.getVesselsByAgent(agentId));
     }
 
     // Add vessel

@@ -60,7 +60,7 @@ public class AuthService {
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
 
-        AuthResponseDTO payload = new AuthResponseDTO(token, user.getFullName(), user.getRole().name(), "Login successful");
+        AuthResponseDTO payload = new AuthResponseDTO(  user.getUserId(),   token, user.getFullName(), user.getRole().name(), "Login successful");
         return ApiResponse.ok("Login successful", payload);
     }
 

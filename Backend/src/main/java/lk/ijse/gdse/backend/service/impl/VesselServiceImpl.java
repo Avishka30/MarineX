@@ -59,6 +59,16 @@ public class VesselServiceImpl implements VesselService {
     }
 
     @Override
+    public List<VesselDTO> getVesselsByAgent(Long agentId) {
+        return vesselRepository.findAll() // fetch all vessels
+                .stream()
+                .filter(v -> v.getAgent().getUserId().equals(agentId)) // filter by agentId
+                .map(this::toDTO) // convert to DTO
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
     @Transactional
     public ApiResponse<VesselDTO> addVessel(VesselDTO vesselDTO) {
         Vessel saved = vesselRepository.save(toEntity(vesselDTO));

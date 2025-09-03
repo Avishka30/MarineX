@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harbor Management Agent Dashboard</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+    --primary-blue: #2563eb;
+    --secondary-blue: #1e40af;
+    --light-blue: #3b82f6;
+    --bg-gray: #f8f9fa;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --card-bg: #ffffff;
+    --border-color: #e5e7eb;
+}
+[data-bs-theme="dark"] {
+    --primary-blue: #3b82f6;
+    --secondary-blue: #2563eb;
+    --light-blue: #60a5fa;
+    --bg-gray: #111827;
+    --text-primary: #f9fafb;
+    --text-secondary: #9ca3af;
+    --card-bg: #1f2937;
+    --border-color: #374151;
+}
+.navbar-custom { background-color: var(--primary-blue) !important; }
+.navbar-brand { font-weight: bold; color: white !important; }
+.nav-link { color: #bfdbfe !important; transition: all 0.3s ease; }
+.nav-link:hover, .nav-link.active { color: white !important; background-color: var(--secondary-blue); border-radius: 6px; }
+.dropdown-toggle::after { display: none; }
+.profile-avatar { width:32px; height:32px; background-color: var(--light-blue); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; }
+.card { background-color: var(--card-bg); border: 1px solid var(--border-color); }
+.card-header { background-color: var(--card-bg); border-bottom:1px solid var(--border-color); }
+.theme-toggle { background:none; border:1px solid rgba(255,255,255,0.3); color:#bfdbfe; padding:6px 12px; border-radius:6px; transition:all 0.3s ease; }
+.theme-toggle:hover { background-color: rgba(255,255,255,0.1); color:white; }
+.section-content { display:none; }
+.section-content.active { display:block; }
+body { background-color: var(--bg-gray); color: var(--text-primary); transition: all 0.3s ease; }
+</style>
+</head>
+<body data-bs-theme="light">
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-custom">
+<div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" href="#">
+        <i class="fas fa-anchor me-2"></i> MarineX Agent-Dashboard
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+            <li class="nav-item"><a class="nav-link" href="agent-dashboard.html">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="bookings.html"><i class="fas fa-calendar me-1"></i>Bookings</a></li>
+            <li class="nav-item"><a class="nav-link" href="vessel-management.html"><i class="fas fa-ship me-1"></i>Vessels</a></li>
+            <li class="nav-item"><a class="nav-link" href="payment-history.html"><i class="fas fa-credit-card me-1"></i>Payment History</a></li>
+            <li class="nav-item"><a class="nav-link" href="others.html"><i class="fas fa-ellipsis-h me-1"></i>Others</a></li>
+        </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <button class="theme-toggle me-3" onclick="toggleTheme()">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+            </li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-bell"></i></a></li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                    <div class="profile-avatar me-2"><i class="fas fa-user"></i></div>
+                    <span class="d-none d-md-block">Agent</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile Update</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+</nav>
+
+<!-- =============================== -->
+<!-- Vessels Section -->
+<div id="vessels" class="section-content active">
+<h3 class="mb-3">Manage Vessels</h3>
+
+<!-- Filters -->
+<div class="card p-3 mb-3">
+<div class="row g-3 align-items-end">
+<div class="col-md-4">
+    <label class="form-label">Search by Name</label>
+    <input type="text" id="filterName" class="form-control" placeholder="Vessel Name">
+</div>
+<div class="col-md-4">
+    <label class="form-label">Filter by Category</label>
+    <select id="filterCategory" class="form-select">
+        <option value="">All Categories</option>
+        <option value="CARGO">Cargo</option>
+        <option value="PASSENGER">Passenger</option>
+        <option value="FISHING">Fishing</option>
+        <option value="MILITARY">Military</option>
+        <option value="OTHER">Other</option>
+    </select>
+</div>
+<div class="col-md-2">
+    <button class="btn btn-outline-primary w-100" onclick="applyFilters()"><i class="fas fa-filter me-1"></i> Apply</button>
+</div>
+</div>
+</div>
+
+<!-- CRUD Form -->
+<div class="card p-3 mb-4">
+<form id="vesselForm">
+    <input type="hidden" id="vesselId">
+    <div class="row g-3">
+        <div class="col-md-3">
+            <label class="form-label">Vessel Name</label>
+            <input type="text" id="vesselName" class="form-control" required>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Category</label>
+            <select id="vesselCategory" class="form-select" required>
+                <option value="CARGO">Cargo</option>
+                <option value="PASSENGER">Passenger</option>
+                <option value="FISHING">Fishing</option>
+                <option value="MILITARY">Military</option>
+                <option value="OTHER">Other</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Size</label>
+            <input type="text" id="vesselSize" class="form-control" required>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Company Name</label>
+            <input type="text" id="companyName" class="form-control" required>
+        </div>
+        <div class="col-md-1 d-flex align-items-end">
+            <button type="submit" class="btn btn-success w-100">Save</button>
+        </div>
+    </div>
+</form>
+</div>
+
+<!-- Vessel Cards -->
+<div class="row" id="vesselCards"></div>
+</div>
+
+<!-- =============================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const token = localStorage.getItem("token");
+    const agentId = localStorage.getItem("agentId"); // <-- must match login storage
+
+    if (!token || !agentId) {
+        alert("Session expired. Please log in again.");
+        window.location.href = "login.html";
+        return;
+    }
+
+    setTheme(localStorage.getItem('theme') || 'light');
+    highlightActiveNav();
+    fetchVessels(agentId); // fetch only this agent's vessels
+
+    document.querySelectorAll('.dropdown-item.text-danger').forEach(btn => {
+        btn.addEventListener('click', logout);
+    });
+});
+
+const apiBase = 'http://localhost:8080/api/vessels';
+const vesselForm = document.getElementById('vesselForm');
+const vesselCards = document.getElementById('vesselCards');
+
+function getFetchOptions(method = 'GET', body = null) {
+    const token = localStorage.getItem("token");
+    const options = {
+        method,
+        headers: { 
+            'Authorization': `Bearer ${token}`, 
+            'Content-Type': 'application/json' 
+        }
+    };
+    if (body) options.body = JSON.stringify(body);
+    return options;
+}
+
+// Fetch only vessels of the logged-in agent
+async function fetchVessels(agentId) {
+    try {
+        const res = await fetch(`${apiBase}/agent/${agentId}`, getFetchOptions());
+        if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+        const vessels = await res.json();
+        renderCards(vessels);
+    } catch(err) {
+        console.error(err);
+        alert("Failed to fetch vessels: " + err.message);
+    }
+}
+
+// Render vessel cards
+function renderCards(vessels) {
+    vesselCards.innerHTML = '';
+    vessels.forEach(v => {
+        const col = document.createElement('div');
+        col.className = 'col-md-4 mb-3';
+        col.innerHTML = `
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">${v.name}</h5>
+                    <p class="card-text mb-1"><strong>Category:</strong> ${v.category}</p>
+                    <p class="card-text mb-1"><strong>Size:</strong> ${v.size}</p>
+                    <p class="card-text mb-1"><strong>Company:</strong> ${v.companyName}</p>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <button class="btn btn-sm btn-info" onclick="editVessel(${v.vesselId})"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteVessel(${v.vesselId})"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+            </div>
+        `;
+        vesselCards.appendChild(col);
+    });
+}
+
+// Vessel CRUD
+vesselForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const vesselId = document.getElementById('vesselId').value;
+    const payload = {
+        name: document.getElementById('vesselName').value,
+        category: document.getElementById('vesselCategory').value,
+        size: document.getElementById('vesselSize').value,
+        companyName: document.getElementById('companyName').value,
+        agentId: localStorage.getItem("agentId")
+    };
+
+    try {
+        const url = vesselId ? `${apiBase}/${vesselId}` : apiBase;
+        const method = vesselId ? 'PUT' : 'POST';
+        const res = await fetch(url, getFetchOptions(method, payload));
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.message || `${res.status} ${res.statusText}`);
+        }
+
+        vesselForm.reset();
+        document.getElementById('vesselId').value = '';
+        fetchVessels(localStorage.getItem("agentId"));
+    } catch(err) {
+        console.error(err);
+        alert("Failed to save vessel: " + err.message);
+    }
+});
+
+// Edit vessel
+async function editVessel(id) {
+    try {
+        const res = await fetch(`${apiBase}/${id}`, getFetchOptions());
+        if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+        const v = await res.json();
+        document.getElementById('vesselId').value = v.vesselId;
+        document.getElementById('vesselName').value = v.name;
+        document.getElementById('vesselCategory').value = v.category;
+        document.getElementById('vesselSize').value = v.size;
+        document.getElementById('companyName').value = v.companyName;
+    } catch(err) {
+        console.error(err);
+        alert("Failed to fetch vessel: " + err.message);
+    }
+}
+
+// Delete vessel
+async function deleteVessel(id) {
+    if (!confirm("Are you sure you want to delete this vessel?")) return;
+    try {
+        const res = await fetch(`${apiBase}/${id}`, getFetchOptions('DELETE'));
+        if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+        fetchVessels(localStorage.getItem("agentId"));
+    } catch(err) {
+        console.error(err);
+        alert("Failed to delete vessel: " + err.message);
+    }
+}
+
+// Logout
+function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("agentId");
+    window.location.href = "login.html";
+}
+
+// Theme helpers
+function toggleTheme() {
+    const theme = document.body.getAttribute('data-bs-theme') === 'light' ? 'dark' : 'light';
+    setTheme(theme);
+}
+
+function setTheme(theme) {
+    document.body.setAttribute('data-bs-theme', theme);
+    document.getElementById('theme-icon').className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    localStorage.setItem('theme', theme);
+}
+
+function highlightActiveNav() {
+    const currentPage = window.location.pathname.split("/").pop();
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === currentPage);
+    });
+}
+
+</script>
+
+
+
+</body>
+</html>

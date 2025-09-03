@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface VesselService {
 
+    List<VesselDTO> getVesselsByAgent(Long agentId);
+
     List<VesselDTO> getAllVessels();
 
     VesselDTO getVesselById(Long id);

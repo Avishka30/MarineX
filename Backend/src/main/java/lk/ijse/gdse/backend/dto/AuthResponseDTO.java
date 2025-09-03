@@ -1,6 +1,7 @@
 package lk.ijse.gdse.backend.dto;
 
 public class AuthResponseDTO {
+    private Long userId;
     private String token;
     private String fullName;
     private String role;
@@ -8,7 +9,8 @@ public class AuthResponseDTO {
 
     public AuthResponseDTO() {}
 
-    public AuthResponseDTO(String token, String fullName, String role, String message) {
+    public AuthResponseDTO(Long userId,String token, String fullName, String role, String message) {
+        this.userId = userId;
         this.token = token;
         this.fullName = fullName;
         this.role = role;
@@ -16,6 +18,8 @@ public class AuthResponseDTO {
     }
 
     // getters & setters
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
     public String getToken() { return token; }
     public void setToken(String token) { this.token = token; }
     public String getFullName() { return fullName; }

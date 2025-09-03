@@ -132,6 +132,7 @@ loginForm.addEventListener('submit', async (e) => {
       // Save token in localStorage instead of sessionStorage
       localStorage.setItem('token', data.data.token);
       localStorage.setItem('role', data.data.role);
+      localStorage.setItem('agentId', data.data.userId);
 
       // Redirect based on role after successful login
       if (data.data.role === 'ADMIN') {
