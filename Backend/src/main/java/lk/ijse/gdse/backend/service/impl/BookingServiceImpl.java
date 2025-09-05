@@ -41,6 +41,22 @@ public class BookingServiceImpl implements BookingService {
         User agent = agentRepository.findById(bookingDTO.getAgentId())
                 .orElseThrow(() -> new RuntimeException("Agent not found"));
 
+        //  Check vessel ownership
+        if (!vessel.getAgent().getUserId().equals(agent.getUserId())) {
+            throw new RuntimeException("Vessel does not belong to this agent!");
+        }
+
+        // Check berth availability
+        boolean berthTaken = bookingRepository.existsByBerthAndDateRange(
+                berth.getBerthId(),
+                bookingDTO.getBookingDate(),
+                bookingDTO.getEndDate()
+        );
+
+        if (berthTaken) {
+            throw new RuntimeException("This berth is already booked for the selected date range!");
+        }
+
         List<Services> services = serviceRepository.findAllById(bookingDTO.getServiceIds());
 
         // Total price calculation
@@ -76,6 +92,7 @@ public class BookingServiceImpl implements BookingService {
 
         return bookingDTO;
     }
+
 
     @Override
     public BookingDTO updateBooking(Long id, BookingDTO bookingDTO) {

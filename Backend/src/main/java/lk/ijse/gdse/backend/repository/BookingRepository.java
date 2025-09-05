@@ -30,4 +30,19 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate
     );
+
+    @Query("""
+SELECT (COUNT(b) > 0) 
+FROM Booking b
+WHERE b.berth.berthId = :berthId
+  AND b.bookingDate <= :endDate
+  AND b.endDate   >= :startDate
+""")
+    boolean existsByBerthAndDateRange(
+            @Param("berthId") Long berthId,
+            @Param("startDate") java.time.LocalDateTime startDate,
+            @Param("endDate")   java.time.LocalDateTime endDate
+    );
+
+
 }
