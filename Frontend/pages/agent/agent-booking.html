@@ -259,33 +259,6 @@ function loadServices(token, serviceMap) {
     }).catch(err => console.error(err));
 }
 
-// function loadBookings(agentId, token, vesselMap, berthMap, serviceMap) {
-//     fetch(`http://localhost:8080/api/bookings/agent/${agentId}`, { headers: { "Authorization": "Bearer " + token } })
-//     .then(res => res.json())
-//     .then(bookings => {
-//         const tbody = document.querySelector("#bookingsTable tbody"); tbody.innerHTML = "";
-//         bookings.forEach((b,i) => {
-//             const vesselName = vesselMap.get(b.vesselId) || b.vesselId;
-//             const berthData = berthMap.get(b.berthId) || {};
-//             const serviceNames = (b.serviceIds || []).map(id => serviceMap.get(id)?.name || id).join(", ");
-//             tbody.innerHTML += `<tr>
-//                 <td>${i+1}</td>
-//                 <td>${vesselName}</td>
-//                 <td>${berthData.number || b.berthId}</td>
-//                 <td>${serviceNames}</td>
-//                 <td>${b.purpose || ''}</td>
-//                 <td>${b.bookingDate || ""}</td>
-//                 <td>${b.endDate || ""}</td>
-//                 <td>${b.totalPrice || 0}</td>
-//                 <td>${b.status || ""}</td>
-//                 <td class="text-center">
-//                     <button class="btn btn-sm btn-warning" onclick="editBooking(${b.bookingId})">Edit</button>
-//                     <button class="btn btn-sm btn-danger" onclick="deleteBooking(${b.bookingId})">Delete</button>
-//                 </td>
-//             </tr>`;
-//         });
-//     }).catch(err => console.error(err));
-// }
 
 function loadBookings(agentId, token, vesselMap, berthMap, serviceMap) {
     fetch(`http://localhost:8080/api/bookings/agent/${agentId}`, { headers: { "Authorization": "Bearer " + token } })
