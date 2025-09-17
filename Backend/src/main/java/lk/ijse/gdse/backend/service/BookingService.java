@@ -16,4 +16,6 @@ public interface BookingService {
     List<BookingDTO> getAllBookings();
 
     List<BookingDTO> getBookingsByAgent(Long agentId);
+
+    BookingDTO approveBooking(Long bookingId);
 }

@@ -1,551 +1,291 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harbor Management Agent Dashboard</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-blue: #2563eb;
-            --secondary-blue: #1e40af;
-            --light-blue: #3b82f6;
-            --bg-gray: #f8f9fa;
-            --text-primary: #1f2937;
-            --text-secondary: #6b7280;
-            --card-bg: #ffffff;
-            --border-color: #e5e7eb;
-        }
-
-        [data-bs-theme="dark"] {
-            --primary-blue: #3b82f6;
-            --secondary-blue: #2563eb;
-            --light-blue: #60a5fa;
-            --bg-gray: #111827;
-            --text-primary: #f9fafb;
-            --text-secondary: #9ca3af;
-            --card-bg: #1f2937;
-            --border-color: #374151;
-        }
-        
-        .navbar-custom {
-            background-color: var(--primary-blue) !important;
-        }
-        
-        .navbar-brand {
-            font-weight: bold;
-            color: white !important;
-        }
-        
-        .nav-link {
-            color: #bfdbfe !important;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-link:hover, .nav-link.active {
-            color: white !important;
-            background-color: var(--secondary-blue);
-            border-radius: 6px;
-        }
-        
-        .dropdown-toggle::after {
-            display: none;
-        }
-        
-        .profile-avatar {
-            width: 32px;
-            height: 32px;
-            background-color: var(--light-blue);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-        
-        .stat-card {
-            transition: transform 0.2s ease;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-2px);
-        }
-        
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .quick-access-btn {
-            border: 2px solid var(--border-color);
-            background: var(--card-bg);
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: var(--text-primary);
-        }
-        
-        .quick-access-btn:hover {
-            border-color: var(--light-blue);
-            background-color: var(--primary-blue);
-            color: white;
-            text-decoration: none;
-        }
-        
-        .quick-access-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-        
-        .welcome-section {
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-            color: white;
-            border-radius: 15px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-        
-        .section-content {
-            display: none;
-        }
-        
-        .section-content.active {
-            display: block;
-        }
-        
-        body {
-            background-color: var(--bg-gray);
-            color: var(--text-primary);
-            transition: all 0.3s ease;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-        }
-
-        .card-header {
-            background-color: var(--card-bg);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .theme-toggle {
-            background: none;
-            border: 1px solid rgba(255,255,255,0.3);
-            color: #bfdbfe;
-            padding: 6px 12px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .theme-toggle:hover {
-            background-color: rgba(255,255,255,0.1);
-            color: white;
-        }
-
-        .text-primary-custom {
-            color: var(--text-primary) !important;
-        }
-
-        .text-secondary-custom {
-            color: var(--text-secondary) !important;
-        }
-
-        .welcome-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.9;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harbor Management Agent Dashboard</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+    :root {
+        --primary-blue: #2563eb;
+        --secondary-blue: #1e40af;
+        --light-blue: #3b82f6;
+        --bg-gray: #f8f9fa;
+        --text-primary: #1f2937;
+        --text-secondary: #6b7280;
+        --card-bg: #ffffff;
+        --border-color: #e5e7eb;
+    }
+    [data-bs-theme="dark"] {
+        --primary-blue: #3b82f6;
+        --secondary-blue: #2563eb;
+        --light-blue: #60a5fa;
+        --bg-gray: #111827;
+        --text-primary: #f9fafb;
+        --text-secondary: #9ca3af;
+        --card-bg: #1f2937;
+        --border-color: #374151;
+    }
+    body { background-color: var(--bg-gray); color: var(--text-primary); transition: all 0.3s ease; }
+    .navbar-custom { background-color: var(--primary-blue) !important; }
+    .navbar-brand { font-weight: bold; color: white !important; }
+    .nav-link { color: #bfdbfe !important; transition: all 0.3s ease; }
+    .nav-link:hover, .nav-link.active { color: white !important; background-color: var(--secondary-blue); border-radius: 6px; }
+    .profile-avatar { width: 32px; height: 32px; background-color: var(--light-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; }
+    .card { background-color: var(--card-bg); border: 1px solid var(--border-color); }
+    .card-header { background-color: var(--card-bg); border-bottom: 1px solid var(--border-color); }
+    .theme-toggle { background: none; border: 1px solid rgba(255,255,255,0.3); color: #bfdbfe; padding: 6px 12px; border-radius: 6px; transition: all 0.3s ease; }
+    .theme-toggle:hover { background-color: rgba(255,255,255,0.1); color: white; }
+</style>
 </head>
 <body data-bs-theme="light">
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-custom">
-        <div class="container-fluid">
-            <!-- Brand -->
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <i class="fas fa-anchor me-2"></i>
-                MarineX Agent-Dashboard
-            </a>
-            
-            <!-- Mobile Toggle -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <!-- Navigation Items -->
-            <div class="collapse navbar-collapse" id="navbarNav">
-               <ul class="navbar-nav me-auto">
-    <li class="nav-item">
-        <a class="nav-link active px-3" href="dashboard.html">
-            Dashboard
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link px-3" href="bookings.html">
-            <i class="fas fa-calendar me-1"></i>
-            Bookings
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link px-3" href="vessels.html">
-            <i class="fas fa-ship me-1"></i>
-            Vessels
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link px-3" href="payment-history.html">
-            <i class="fas fa-credit-card me-1"></i>
-            Payment History
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link px-3" href="others.html">
-            <i class="fas fa-ellipsis-h me-1"></i>
-            Others
-        </a>
-    </li>
-</ul>
 
-                <!-- Profile Section -->
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <button class="theme-toggle me-3" onclick="toggleTheme()">
-                            <i class="fas fa-moon" id="theme-icon"></i>
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="fas fa-bell"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                            <div class="profile-avatar me-2">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <span class="d-none d-md-block">Agent</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user me-2"></i>
-                                    Profile Update
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item text-danger" href="#">
-                                    <i class="fas fa-sign-out-alt me-2"></i>
-                                    Logout
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-custom">
+<div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" href="#">
+        <i class="fas fa-anchor me-2"></i>
+        MarineX Agent-Dashboard
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+            <li class="nav-item"><a class="nav-link active px-3" href="dashboard.html">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link px-3" href="bookings.html"><i class="fas fa-calendar me-1"></i> Bookings</a></li>
+            <li class="nav-item"><a class="nav-link px-3" href="vessels.html"><i class="fas fa-ship me-1"></i> Vessels</a></li>
+            <li class="nav-item"><a class="nav-link px-3" href="payment-history.html"><i class="fas fa-credit-card me-1"></i> Payment History</a></li>
+            <li class="nav-item"><a class="nav-link px-3" href="others.html"><i class="fas fa-ellipsis-h me-1"></i> Others</a></li>
+        </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item"><button class="theme-toggle me-3" onclick="toggleTheme()"><i class="fas fa-moon" id="theme-icon"></i></button></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-bell"></i></a></li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                    <div class="profile-avatar me-2"><i class="fas fa-user"></i></div>
+                    <span class="d-none d-md-block">Agent</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile Update</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                 </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- body -->
-
-    <main class="container mt-4">
-
-    <!-- Page Title -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3><i class="fas fa-calendar me-2"></i>Manage Bookings</h3>
-        <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#bookingFormSection">
-            <i class="fas fa-plus"></i> New Booking
-        </button>
+            </li>
+        </ul>
     </div>
+</div>
+</nav>
 
-    <!-- Booking Form -->
-    <div class="collapse mb-4" id="bookingFormSection">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Add / Update Booking</h5>
-            </div>
-            <div class="card-body">
-                <form id="bookingForm">
-                    <input type="hidden" id="bookingId">
+<!-- Main Content -->
+<main class="container mt-4">
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="fas fa-calendar me-2"></i>Manage Bookings</h3>
+    <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#bookingFormSection"><i class="fas fa-plus"></i> New Booking</button>
+</div>
 
-                    <div class="row g-3">
-                        <!-- Vessel -->
-                        <div class="col-md-4">
-                            <label class="form-label">Vessel</label>
-                            <select id="vesselId" class="form-select" required>
-                                <option value="">Select Vessel</option>
-                            </select>
-                        </div>
-
-                        <!-- Berth -->
-                        <div class="col-md-4">
-                            <label class="form-label">Berth</label>
-                            <select id="berthId" class="form-select" required>
-                                <option value="">Select Berth</option>
-                            </select>
-                        </div>
-
-                        <!-- Services -->
-                        <div class="col-md-4">
-                            <label class="form-label">Services</label>
-                            <select id="serviceIds" class="form-select" multiple required>
-                                <!-- Multiple service options will load -->
-                            </select>
-                            <small class="text-muted">Hold Ctrl (Windows) / Cmd (Mac) to select multiple</small>
-                        </div>
-
-                        <!-- Start DateTime -->
-                        <div class="col-md-6">
-                            <label class="form-label">Start Date & Time</label>
-                            <input type="datetime-local" id="bookingDate" class="form-control" required>
-                        </div>
-
-                        <!-- End DateTime -->
-                        <div class="col-md-6">
-                            <label class="form-label">End Date & Time</label>
-                            <input type="datetime-local" id="endDate" class="form-control" required>
-                        </div>
-
-                        <!-- Total Price -->
-                        <div class="col-md-6">
-                            <label class="form-label">Total Price</label>
-                            <input type="number" id="totalPrice" class="form-control" placeholder="Auto-calculated or enter" step="0.01">
-                        </div>
-                    </div>
-
-                    <div class="mt-3 text-end">
-                        <button type="reset" class="btn btn-secondary">Clear</button>
-                        <button type="submit" class="btn btn-success">Save Booking</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bookings Table -->
+<!-- Booking Form -->
+<div class="collapse mb-4" id="bookingFormSection">
     <div class="card">
-        <div class="card-header">
-            <h5 class="mb-0">My Bookings</h5>
-        </div>
-        <div class="card-body table-responsive">
-            <table class="table table-striped table-hover align-middle" id="bookingsTable">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>Vessel</th>
-                        <th>Berth</th>
-                        <th>Services</th>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th>Total Price</th>
-                        <th>Status</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Bookings will load dynamically -->
-                </tbody>
-            </table>
+        <div class="card-header"><h5 class="mb-0">Add / Update Booking</h5></div>
+        <div class="card-body">
+            <form id="bookingForm">
+                <input type="hidden" id="bookingId">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Vessel</label>
+                        <select id="vesselId" class="form-select" required>
+                            <option value="">Select Vessel</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Berth</label>
+                        <select id="berthId" class="form-select" required>
+                            <option value="">Select Berth</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Services</label>
+                        <select id="serviceIds" class="form-select" multiple required></select>
+                        <small class="text-muted">Hold Ctrl (Windows) / Cmd (Mac) to select multiple</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Purpose</label>
+                        <select id="purpose" class="form-select" required>
+                            <option value="">Select Purpose</option>
+                            <option value="CARGO_LOAD">Cargo Load</option>
+                            <option value="CARGO_UNLOAD">Cargo Unload</option>
+                            <option value="PASSENGER_BOARDING">Passenger Boarding</option>
+                            <option value="PASSENGER_ALIGHTING">Passenger Alighting</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Start Date & Time</label>
+                        <input type="datetime-local" id="bookingDate" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">End Date & Time</label>
+                        <input type="datetime-local" id="endDate" class="form-control" required>
+                    </div>
+                </div>
+                <div class="mt-3 text-end">
+                    <button type="reset" class="btn btn-secondary">Clear</button>
+                    <button type="submit" class="btn btn-success">Save Booking</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
+
+<!-- Bookings Table -->
+<div class="card">
+    <div class="card-header"><h5 class="mb-0">My Bookings</h5></div>
+    <div class="card-body table-responsive">
+        <table class="table table-striped table-hover align-middle" id="bookingsTable">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Vessel</th>
+                    <th>Berth</th>
+                    <th>Services</th>
+                    <th>Purpose</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Total Price</th>
+                    <th>Status</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
 </main>
 
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-
-            // Load saved theme
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            setTheme(savedTheme);
-        });
-
-        // Theme toggle functionality
-        function toggleTheme() {
-            const currentTheme = document.body.getAttribute('data-bs-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            setTheme(newTheme);
-        }
-
-        function setTheme(theme) {
-            document.body.setAttribute('data-bs-theme', theme);
-            const themeIcon = document.getElementById('theme-icon');
-            
-            if (theme === 'dark') {
-                themeIcon.className = 'fas fa-sun';
-            } else {
-                themeIcon.className = 'fas fa-moon';
-            }
-            
-            // Save theme preference
-            localStorage.setItem('theme', theme);
-        }
-
-const currentPage = window.location.pathname.split("/").pop(); // e.g., "dashboard.html"
-document.querySelectorAll('.nav-link').forEach(link => {
-    if (link.getAttribute('href') === currentPage) {
-        link.classList.add('active');
-    } else {
-        link.classList.remove('active');
-    }
-});
-
-//save
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
 document.addEventListener("DOMContentLoaded", () => {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+
     const token = localStorage.getItem("token");
     const agentId = Number(localStorage.getItem("agentId"));
+    if (!token || !agentId) { alert("You must log in first!"); window.location.href = "login.html"; return; }
 
-    if (!token || !agentId) {
-        alert("You must log in first!");
-        window.location.href = "login.html";
-        return;
-    }
-
-    // Global caches
-    let vesselMap = new Map();
-    let berthMap = new Map();
-    let serviceMap = new Map();
-
+    const vesselMap = new Map(), berthMap = new Map(), serviceMap = new Map();
     loadVessels(agentId, token, vesselMap);
     loadBerths(token, berthMap);
     loadServices(token, serviceMap);
     loadBookings(agentId, token, vesselMap, berthMap, serviceMap);
 
-    document.getElementById("berthId").addEventListener("change", () => {
-        calculateTotal(berthMap, serviceMap);
-    });
-    document.getElementById("serviceIds").addEventListener("change", () => {
-        calculateTotal(berthMap, serviceMap);
-    });
-
-    document.getElementById("bookingForm").addEventListener("submit", async (e) => {
+    document.getElementById("bookingForm").addEventListener("submit", async e => {
         e.preventDefault();
-
         const bookingId = document.getElementById("bookingId").value;
         const vesselId = Number(document.getElementById("vesselId").value);
         const berthId = Number(document.getElementById("berthId").value);
-        const serviceIds = Array.from(document.getElementById("serviceIds").selectedOptions)
-                                .map(opt => Number(opt.value));
-
-        if (!vesselId || !berthId) {
-            alert("Please select Vessel and Berth!");
-            return;
-        }
+        const serviceIds = Array.from(document.getElementById("serviceIds").selectedOptions).map(opt => Number(opt.value));
+        const purpose = document.getElementById("purpose").value;
+        if (!vesselId || !berthId || !purpose) { alert("Please select Vessel, Berth, and Purpose!"); return; }
 
         const bookingData = {
-            vesselId,
-            berthId,
-            agentId,
-            serviceIds,
+            vesselId, berthId, agentId, serviceIds, purpose,
             bookingDate: document.getElementById("bookingDate").value,
-            endDate: document.getElementById("endDate").value,
-            totalPrice: parseFloat(document.getElementById("totalPrice").value) || 0
+            endDate: document.getElementById("endDate").value
         };
 
-        const url = bookingId 
-            ? `http://localhost:8080/api/bookings/${bookingId}`
-            : `http://localhost:8080/api/bookings`;
+        const url = bookingId ? `http://localhost:8080/api/bookings/${bookingId}` : `http://localhost:8080/api/bookings`;
         const method = bookingId ? "PUT" : "POST";
 
         try {
-            const res = await fetch(url, {
-                method,
-                headers: {
-                    "Authorization": "Bearer " + token,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(bookingData)
+            const res = await fetch(url, { 
+                method, 
+                headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" }, 
+                body: JSON.stringify(bookingData) 
             });
-
             if (!res.ok) throw new Error(`Server error ${res.status}`);
-
             alert("✅ Booking saved successfully");
             document.getElementById("bookingForm").reset();
             loadBookings(agentId, token, vesselMap, berthMap, serviceMap);
-            calculateTotal(berthMap, serviceMap);
-
-        } catch (err) {
-            console.error("❌ Error saving booking:", err);
-            alert("Failed to save booking. Check console.");
-        }
+        } catch (err) { console.error("❌ Error saving booking:", err); alert("Failed to save booking."); }
     });
 });
 
-// --------- LOAD FUNCTIONS ---------
+function toggleTheme() {
+    const newTheme = document.body.getAttribute('data-bs-theme') === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+}
+
+function setTheme(theme) {
+    document.body.setAttribute('data-bs-theme', theme);
+    document.getElementById('theme-icon').className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    localStorage.setItem('theme', theme);
+}
+
+const currentPage = window.location.pathname.split("/").pop();
+document.querySelectorAll('.nav-link').forEach(link => link.classList.toggle('active', link.getAttribute('href') === currentPage));
 
 function loadVessels(agentId, token, vesselMap) {
     fetch(`http://localhost:8080/api/vessels/agent/${agentId}`, { headers: { "Authorization": "Bearer " + token } })
     .then(res => res.json())
     .then(vessels => {
-        const vesselSelect = document.getElementById("vesselId");
-        vesselSelect.innerHTML = `<option value="">Select Vessel</option>`;
+        const sel = document.getElementById("vesselId");
+        sel.innerHTML = `<option value="">Select Vessel</option>`;
         vesselMap.clear();
-        vessels.forEach(v => {
-            vesselMap.set(v.vesselId, v.name);
-            const opt = document.createElement("option");
-            opt.value = v.vesselId;
-            opt.textContent = v.name;
-            vesselSelect.appendChild(opt);
-        });
-    }).catch(err => console.error("Error loading vessels:", err));
+        vessels.forEach(v => { vesselMap.set(v.vesselId, v.name); sel.innerHTML += `<option value="${v.vesselId}">${v.name}</option>`; });
+    }).catch(err => console.error(err));
 }
 
 function loadBerths(token, berthMap) {
     fetch("http://localhost:8080/api/berths", { headers: { "Authorization": "Bearer " + token } })
     .then(res => res.json())
     .then(berths => {
-        const berthSelect = document.getElementById("berthId");
-        berthSelect.innerHTML = `<option value="">Select Berth</option>`;
+        const sel = document.getElementById("berthId");
+        sel.innerHTML = `<option value="">Select Berth</option>`;
         berthMap.clear();
-        berths.forEach(b => {
-            berthMap.set(b.berthId, { number: b.berthNumber, price: Number(b.price) });
-            const opt = document.createElement("option");
-            opt.value = b.berthId;
-            opt.textContent = `Berth ${b.berthNumber} - ${b.status} (Cap: ${b.capacity}, $${b.price})`;
-            berthSelect.appendChild(opt);
-        });
-    }).catch(err => console.error("Error loading berths:", err));
+        berths.forEach(b => { berthMap.set(b.berthId, { number: b.berthNumber, price: Number(b.price) }); sel.innerHTML += `<option value="${b.berthId}">Berth ${b.berthNumber} - ${b.status} (Cap: ${b.capacity}, $${b.price})</option>`; });
+    }).catch(err => console.error(err));
 }
 
 function loadServices(token, serviceMap) {
-    fetch("http://localhost:8080/api/services", {
-        headers: { "Authorization": "Bearer " + token }
-    })
+    fetch("http://localhost:8080/api/services", { headers: { "Authorization": "Bearer " + token } })
     .then(res => res.json())
     .then(services => {
-        // check if the API wraps data
         if (services.data) services = services.data;
-
-        const serviceSelect = document.getElementById("serviceIds");
-        serviceSelect.innerHTML = "";
+        const sel = document.getElementById("serviceIds");
+        sel.innerHTML = "";
         serviceMap.clear();
-
-        services.forEach(s => {
-            serviceMap.set(s.serviceId, parseFloat(s.price || 0));
-            const opt = document.createElement("option");
-            opt.value = s.serviceId;
-            opt.textContent = `${s.name} - $${s.price}`;
-            serviceSelect.appendChild(opt);
-        });
-    })
-    .catch(err => console.error("❌ Error loading services:", err));
+        services.forEach(s => { serviceMap.set(s.serviceId, s); sel.innerHTML += `<option value="${s.serviceId}">${s.name} - $${s.price}</option>`; });
+    }).catch(err => console.error(err));
 }
 
+// function loadBookings(agentId, token, vesselMap, berthMap, serviceMap) {
+//     fetch(`http://localhost:8080/api/bookings/agent/${agentId}`, { headers: { "Authorization": "Bearer " + token } })
+//     .then(res => res.json())
+//     .then(bookings => {
+//         const tbody = document.querySelector("#bookingsTable tbody"); tbody.innerHTML = "";
+//         bookings.forEach((b,i) => {
+//             const vesselName = vesselMap.get(b.vesselId) || b.vesselId;
+//             const berthData = berthMap.get(b.berthId) || {};
+//             const serviceNames = (b.serviceIds || []).map(id => serviceMap.get(id)?.name || id).join(", ");
+//             tbody.innerHTML += `<tr>
+//                 <td>${i+1}</td>
+//                 <td>${vesselName}</td>
+//                 <td>${berthData.number || b.berthId}</td>
+//                 <td>${serviceNames}</td>
+//                 <td>${b.purpose || ''}</td>
+//                 <td>${b.bookingDate || ""}</td>
+//                 <td>${b.endDate || ""}</td>
+//                 <td>${b.totalPrice || 0}</td>
+//                 <td>${b.status || ""}</td>
+//                 <td class="text-center">
+//                     <button class="btn btn-sm btn-warning" onclick="editBooking(${b.bookingId})">Edit</button>
+//                     <button class="btn btn-sm btn-danger" onclick="deleteBooking(${b.bookingId})">Delete</button>
+//                 </td>
+//             </tr>`;
+//         });
+//     }).catch(err => console.error(err));
+// }
 
 function loadBookings(agentId, token, vesselMap, berthMap, serviceMap) {
     fetch(`http://localhost:8080/api/bookings/agent/${agentId}`, { headers: { "Authorization": "Bearer " + token } })
@@ -555,48 +295,36 @@ function loadBookings(agentId, token, vesselMap, berthMap, serviceMap) {
         tbody.innerHTML = "";
 
         bookings.forEach((b, i) => {
-            const tr = document.createElement("tr");
-
             const vesselName = vesselMap.get(b.vesselId) || b.vesselId;
             const berthData = berthMap.get(b.berthId) || {};
             const serviceNames = (b.serviceIds || []).map(id => serviceMap.get(id)?.name || id).join(", ");
 
-            tr.innerHTML = `
+            let actionButtons = '';
+            if (b.status === "APPROVED") {
+                actionButtons = `<button class="btn btn-sm btn-success" onclick="payBooking(${b.bookingId})">Pay Now</button>`;
+            } else {
+                actionButtons = `
+                    <button class="btn btn-sm btn-warning" onclick="editBooking(${b.bookingId})">Edit</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteBooking(${b.bookingId})">Delete</button>
+                `;
+            }
+
+            tbody.innerHTML += `<tr>
                 <td>${i+1}</td>
                 <td>${vesselName}</td>
                 <td>${berthData.number || b.berthId}</td>
                 <td>${serviceNames}</td>
+                <td>${b.purpose || ''}</td>
                 <td>${b.bookingDate || ""}</td>
                 <td>${b.endDate || ""}</td>
                 <td>${b.totalPrice || 0}</td>
                 <td>${b.status || ""}</td>
-                <td class="text-center">
-                    <button class="btn btn-sm btn-warning" onclick="editBooking(${b.bookingId})">Edit</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteBooking(${b.bookingId})">Delete</button>
-                </td>
-            `;
-            tbody.appendChild(tr);
+                <td class="text-center">${actionButtons}</td>
+            </tr>`;
         });
-    }).catch(err => console.error("Error loading bookings:", err));
+    }).catch(err => console.error(err));
 }
+</script>
 
-// -------- CALCULATION --------
-
-function calculateTotal(berthMap, serviceMap) {
-    const berthId = Number(document.getElementById("berthId").value);
-    const selectedServices = Array.from(document.getElementById("serviceIds").selectedOptions).map(opt => Number(opt.value));
-
-    let total = 0;
-    if (berthMap.has(berthId)) total += berthMap.get(berthId).price;
-    selectedServices.forEach(id => {
-        if (serviceMap.has(id)) total += serviceMap.get(id).price;
-    });
-
-    document.getElementById("totalPrice").value = total.toFixed(2);
-}
-
-
-
-    </script>
 </body>
 </html>

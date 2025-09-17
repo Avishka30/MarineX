@@ -58,4 +58,9 @@ public class BookingController {
         List<BookingDTO> bookings = bookingService.getBookingsByAgent(agentId);
         return ResponseEntity.ok(bookings);
     }
+    @PutMapping("/approve/{id}")
+    public ResponseEntity<BookingDTO> approveBooking(@PathVariable Long id) {
+        BookingDTO bookingDTO = bookingService.approveBooking(id);
+        return ResponseEntity.ok(bookingDTO);
+    }
 }
