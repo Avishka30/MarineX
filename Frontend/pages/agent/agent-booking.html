@@ -297,6 +297,16 @@ function loadBookings(agentId, token, vesselMap, berthMap, serviceMap) {
         });
     }).catch(err => console.error(err));
 }
+function payBooking(bookingId) {
+      const row = document.querySelector(`#bookingsTable tbody tr td button[onclick="payBooking(${bookingId})"]`).closest('tr');
+    const totalPrice = Number(row.cells[7].innerText); // totalPrice is in the 8th column
+    const paymentAmount = (totalPrice * 0.2).toFixed(2);
+
+    if (confirm(`Pay 20% of total price: $${paymentAmount}?`)) {
+        // Call backend to mark payment (we'll implement this later)
+        alert(`Payment of $${paymentAmount} for booking ID ${bookingId} is recorded.`);
+    }
+}
 </script>
 
 </body>

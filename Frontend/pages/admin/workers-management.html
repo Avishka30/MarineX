@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MarineX - Admin Dashboard</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+    :root {
+        --primary-dark: #1e3a5f;
+        --primary-light: #2c5aa0;
+        --secondary-gray: #f8f9fa;
+        --text-dark: #2c3e50;
+        --danger-color: #dc3545;
+        --sidebar-width: 280px;
+        --topnav-height: 70px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: Arial,sans-serif; background: var(--secondary-gray); color: var(--text-dark); }
+    
+    /* Top Navigation */
+    .top-nav { background: linear-gradient(135deg,var(--primary-dark),var(--primary-light)); height: var(--topnav-height); z-index: 1030; box-shadow:0 2px 20px rgba(0,0,0,0.1);}
+    .navbar-brand { color:white !important; font-weight:bold; font-size:1.5rem; text-decoration:none; }
+    .btn-toggle-sidebar { background:none;border:none;color:white;font-size:1.2rem; padding:.5rem; border-radius:8px; transition:.3s; }
+    .btn-toggle-sidebar:hover { background: rgba(255,255,255,0.1); }
+    .notification-bell { color:white; font-size:1.2rem; position:relative; text-decoration:none; }
+    .notification-badge { position:absolute; top:-5px; right:-5px; background: var(--danger-color); color:white; border-radius:50%; width:20px;height:20px; font-size:0.7rem; display:flex; align-items:center; justify-content:center; }
+    .user-profile { color:white; text-decoration:none; display:flex; align-items:center; }
+    .user-avatar { width:35px; height:35px; border-radius:50%; margin-right:.5rem; border:2px solid rgba(255,255,255,.3); }
+
+    /* Dashboard Container */
+    .dashboard-container { display:flex; margin-top: var(--topnav-height); min-height: calc(100vh - var(--topnav-height)); }
+
+    /* Sidebar */
+    .sidebar { width: var(--sidebar-width); background: linear-gradient(180deg,var(--primary-dark),var(--primary-light)); color:white; position:fixed; top:var(--topnav-height); height:calc(100vh - var(--topnav-height)); overflow-y:auto; transition:.3s; }
+    .sidebar.collapsed { width:70px; }
+    .sidebar-header { padding:1.5rem 1rem; border-bottom:1px solid rgba(255,255,255,0.1); }
+    .brand-logo { display:flex; align-items:center; font-size:1.5rem; font-weight:bold; }
+    .brand-logo i { margin-right:.5rem; font-size:1.8rem; }
+    .sidebar.collapsed .brand-logo span { display:none; }
+    .sidebar-nav { padding:1rem 0; }
+    .sidebar-nav .nav-link { color: rgba(255,255,255,0.8); padding:1rem 1.5rem; display:flex; align-items:center; text-decoration:none; border-radius:10px; margin:0.2rem 1rem; transition:.3s; }
+    .sidebar-nav .nav-link:hover { background: rgba(255,255,255,0.1); color:white; transform: translateX(5px);}
+    .sidebar-nav .nav-link.active { background: rgba(255,255,255,0.2); color:white; box-shadow:0 5px 15px rgba(0,0,0,0.2);}
+    .sidebar-nav .nav-link i { margin-right:1rem; font-size:1.2rem; width:20px; text-align:center; }
+    .sidebar.collapsed .nav-link span { display:none; }
+
+    /* Main Content */
+    .main-content { flex:1; margin-left: var(--sidebar-width); padding:2rem; transition:.3s; }
+    .main-content.expanded { margin-left:70px; }
+    .demo-content { background:white; padding:2rem; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.08); }
+
+    @media (max-width:1200px) { .sidebar { transform:translateX(-100%); } .sidebar.show { transform:translateX(0); } .main-content { margin-left:0; } }
+    @media (min-width:1201px) { .sidebar { transform:translateX(0); display:block; } }
+</style>
+</head>
+<body>
+<!-- Top Navigation -->
+<nav class="navbar navbar-expand-lg fixed-top top-nav">
+<div class="container-fluid">
+    <button class="btn btn-toggle-sidebar me-3" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <a class="navbar-brand" href="#"><i class="fas fa-anchor me-2"></i>MarineX Admin</a>
+    <div class="navbar-nav ms-auto d-flex flex-row">
+        <div class="nav-item dropdown me-3">
+            <a class="nav-link dropdown-toggle notification-bell" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><h6 class="dropdown-header">Notifications</h6></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-ship me-2"></i>New vessel arrival</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Agent registration pending</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-calendar me-2"></i>Booking confirmation needed</a></li>
+            </ul>
+        </div>
+        <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle user-profile" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><circle cx='20' cy='20' r='20' fill='%232c5aa0'/><circle cx='20' cy='16' r='6' fill='white'/><path d='M20 24c-6 0-12 3-12 8v8h24v-8c0-5-6-8-12-8z' fill='white'/></svg>" class="user-avatar" alt="Admin">Admin User
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+</nav>
+
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-logo"><i class="fas fa-anchor"></i><span>MarineX</span></div>
+        </div>
+        <nav class="sidebar-nav">
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link active" href="#" data-section="dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-section="agent-management"><i class="fas fa-users"></i><span>Agent Management</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-section="berth-management"><i class="fas fa-ship"></i><span>Berth Management</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-section="booking-management"><i class="fas fa-calendar-check"></i><span>Booking Management</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-section="worker-management"><i class="fas fa-hard-hat"></i><span>Worker Management</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-section="view-schedule"><i class="fas fa-clock"></i><span>View Schedule</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-section="payment-details"><i class="fas fa-credit-card"></i><span>Payment Details</span></a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <div class="demo-content">
+            <!-- Worker Form -->
+            <form id="workerForm" class="mb-4">
+                <input type="hidden" id="workerId">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3"><label class="form-label">Full Name</label><input type="text" id="fullName" class="form-control" required></div>
+                    <div class="col-md-3"><label class="form-label">Email</label><input type="email" id="email" class="form-control" required></div>
+                    <div class="col-md-2"><label class="form-label">Phone</label><input type="text" id="phone" class="form-control" required></div>
+                    <div class="col-md-2"><label class="form-label">Specialization</label>
+                        <select id="specialization" class="form-select" required>
+                            <option value="FUEL">Fuel</option>
+                            <option value="MAINTENANCE">Maintenance</option>
+                            <option value="CLEANING">Cleaning</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2"><label class="form-label">Status</label>
+                        <select id="status" class="form-select" required>
+                            <option value="ACTIVE">Active</option>
+                            <option value="INACTIVE">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12 text-end"><button type="submit" class="btn btn-primary">Add / Update</button></div>
+                </div>
+            </form>
+
+            <!-- Search -->
+            <div class="mb-3">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search by name or specialization...">
+            </div>
+
+            <!-- Worker Table -->
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th><th>Full Name</th><th>Email</th><th>Phone</th><th>Specialization</th><th>Status</th><th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="workersTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+
+    sidebarToggle.addEventListener('click', () => {
+        if(window.innerWidth>1200){ sidebar.classList.toggle('collapsed'); mainContent.classList.toggle('expanded'); }
+        else sidebar.classList.toggle('show');
+    });
+
+    document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            document.querySelectorAll('.sidebar-nav .nav-link').forEach(l=>l.classList.remove('active'));
+            link.classList.add('active');
+            const sectionToFile = {
+                "dashboard":"admin-dashboard.html","agent-management":"agent-management.html",
+                "berth-management":"berth-management.html","booking-management":"booking-management.html",
+                "worker-management":"worker-management.html","view-schedule":"view-schedule.html",
+                "payment-details":"payment-details.html"
+            };
+            window.location.href = `/Frontend/pages/admin/${sectionToFile[link.dataset.section]}`;
+        });
+    });
+
+    document.addEventListener('click', e => {
+        if(window.innerWidth<=1200 && !sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) sidebar.classList.remove('show');
+    });
+    window.addEventListener('resize', ()=>{ if(window.innerWidth>1200){ sidebar.classList.remove('show'); } else { sidebar.classList.remove('collapsed'); mainContent.classList.remove('expanded'); } });
+});
+
+// CRUD Operations
+const apiBase = "http://localhost:8080/api/workers";
+const token = localStorage.getItem("token");
+const headers = { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" };
+
+async function fetchWorkers() {
+    try {
+        const res = await fetch(apiBase, { headers });
+        if(!res.ok) throw new Error(res.statusText);
+        const data = await res.json();
+        renderTable(data);
+    } catch(err) { alert("Error fetching workers: "+err.message); }
+}
+
+function renderTable(workers){
+    const tbody = document.getElementById("workersTableBody");
+    tbody.innerHTML="";
+    workers.forEach(w=>{
+        tbody.innerHTML+=`<tr>
+            <td>${w.workerId}</td>
+            <td>${w.fullName}</td>
+            <td>${w.email}</td>
+            <td>${w.phone}</td>
+            <td>${w.specialization}</td>
+            <td>${w.status}</td>
+            <td>
+                <button class="btn btn-sm btn-info me-1" onclick="editWorker(${w.workerId})">Edit</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteWorker(${w.workerId})">Delete</button>
+            </td>
+        </tr>`;
+    });
+}
+
+// Add / Update Worker
+document.getElementById("workerForm").addEventListener("submit", async e=>{
+    e.preventDefault();
+    const workerId=document.getElementById("workerId").value;
+    const dto={
+        fullName:document.getElementById("fullName").value,
+        email:document.getElementById("email").value,
+        phone:document.getElementById("phone").value,
+        specialization:document.getElementById("specialization").value,
+        status:document.getElementById("status").value
+    };
+    await fetch(workerId?`${apiBase}/${workerId}`:apiBase,{
+        method:workerId?"PUT":"POST", headers, body:JSON.stringify(dto)
+    });
+    e.target.reset(); document.getElementById("workerId").value="";
+    fetchWorkers();
+});
+
+// Edit Worker
+async function editWorker(id){
+    const res = await fetch(`${apiBase}/${id}`, { headers });
+    const w = await res.json();
+    document.getElementById("workerId").value = w.workerId;
+    document.getElementById("fullName").value = w.fullName;
+    document.getElementById("email").value = w.email;
+    document.getElementById("phone").value = w.phone;
+    document.getElementById("specialization").value = w.specialization;
+    document.getElementById("status").value = w.status;
+}
+
+// Delete Worker
+async function deleteWorker(id){
+    if(!confirm("Delete this worker?")) return;
+    await fetch(`${apiBase}/${id}`, { method:"DELETE", headers });
+    fetchWorkers();
+}
+
+// Search
+document.getElementById("searchInput").addEventListener("keyup", async e=>{
+    const q=e.target.value.trim();
+    if(!q){ fetchWorkers(); return; }
+    const res = await fetch(`${apiBase}/search?query=${q}`, { headers });
+    const data = await res.json();
+    renderTable(data);
+});
+
+// Initial Load
+fetchWorkers();
+
+
+</script>
+</body>
+</html>
