@@ -366,37 +366,37 @@
             <nav class="sidebar-nav">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-section="dashboard">
+                        <a class="nav-link" href="/Frontend/pages/admin/admin-dashboard.html" data-section="dashboard">
                             <i class="fas fa-tachometer-alt"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-section="agent-management">
+                        <a class="nav-link" href="/Frontend/pages/admin/agent-management.html" data-section="agent-management">
                             <i class="fas fa-users"></i>
                             <span>Agent Management</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-section="berth-management">
+                        <a class="nav-link" href="/Frontend/pages/admin/berth-management.html" data-section="berth-management">
                             <i class="fas fa-ship"></i>
                             <span>Berth Management</span>
                         </a>
                     </li>
                         <li class="nav-item">
-                        <a class="nav-link" href="#" data-section="service-management">
+                        <a class="nav-link" href="/Frontend/pages/admin/service-management.html" data-section="service-management">
                             <i class="fas fa-credit-card"></i>
                             <span>Service Management</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-section="booking-management">
+                        <a class="nav-link" href="/Frontend/pages/admin/admin-booking.html" data-section="booking-management">
                             <i class="fas fa-calendar-check"></i>
                             <span>Booking Management</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-section="worker-management">
+                        <a class="nav-link" href="/Frontend/pages/admin/workers-management.html" data-section="worker-management">
                             <i class="fas fa-hard-hat"></i>
                             <span>Worker Management</span>
                         </a>
@@ -766,6 +766,62 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+//logout
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Select the Logout link in the user dropdown
+    const logoutLink = [...document.querySelectorAll(".dropdown-item")].find(
+        el => el.textContent.trim() === "Logout"
+    );
+
+    if (logoutLink) {
+        logoutLink.addEventListener("click", async (e) => {
+            e.preventDefault();
+
+            try {
+                const token = localStorage.getItem("token"); // get token if needed
+
+                // Use full backend URL
+                const response = await fetch("http://localhost:8080/api/auth/logout", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": token ? `Bearer ${token}` : ""
+                    }
+                });
+
+                // Handle different response types
+                let resData;
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.includes("application/json")) {
+                    resData = await response.json();
+                } else {
+                    resData = { message: await response.text() };
+                }
+
+                if (response.ok) {
+                    // Clear storage
+                    localStorage.clear();
+                    sessionStorage.clear();
+
+                    // Optional success message
+                    alert(resData?.message || "Logged out successfully!");
+
+                    // Redirect to login page (adjust path if needed)
+                    window.location.href = "/Frontend/pages/login.html";
+                } else {
+                    alert(resData?.message || "Logout failed! Please try again.");
+                }
+
+            } catch (error) {
+                console.error("Logout error:", error);
+                alert("An error occurred during logout: " + error.message);
+            }
+        });
+    }
+});
+
 
     </script>
 </body>
