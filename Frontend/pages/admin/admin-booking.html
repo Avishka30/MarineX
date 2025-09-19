@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarineX - Navbar & Sidebar Components</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* MarineX Navigation Styles */
+        :root {
+            --primary-dark: #1e3a5f;
+            --primary-light: #2c5aa0;
+            --secondary-gray: #f8f9fa;
+            --accent-blue: #0d6efd;
+            --text-dark: #2c3e50;
+            --text-light: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --white: #ffffff;
+            --sidebar-width: 280px;
+            --topnav-height: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--secondary-gray);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            height: var(--topnav-height);
+            z-index: 1030;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .btn-toggle-sidebar {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-toggle-sidebar:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .notification-bell {
+            color: white !important;
+            font-size: 1.2rem;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-profile {
+            color: white !important;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .notification-dropdown {
+            min-width: 300px;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            display: flex;
+            margin-top: var(--topnav-height);
+            min-height: calc(100vh - var(--topnav-height));
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+            color: white;
+            transition: all 0.3s ease;
+            position: fixed;
+            left: 0;
+            top: var(--topnav-height);
+            height: calc(100vh - var(--topnav-height));
+            overflow-y: auto;
+            z-index: 1020;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .brand-logo i {
+            margin-right: 0.5rem;
+            font-size: 1.8rem;
+        }
+
+        .sidebar.collapsed .brand-logo span {
+            display: none;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            margin: 0.2rem 1rem;
+            border-radius: 10px;
+        }
+
+        .sidebar-nav .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .sidebar-nav .nav-link.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .sidebar-nav .nav-link i {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .nav-link span {
+            display: none;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 70px;
+        }
+
+        /* Demo Content */
+        .demo-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Ensure sidebar is visible on desktop */
+        @media (min-width: 1201px) {
+            .sidebar {
+                transform: translateX(0);
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --sidebar-width: 100%;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .user-profile {
+                flex-direction: column;
+                font-size: 0.8rem;
+            }
+            
+            .notification-dropdown {
+                min-width: 280px;
+            }
+        }
+
+        /* Animation Effects */
+        .sidebar-nav .nav-link {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            left: -100%;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .sidebar-nav .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .btn-toggle-sidebar:active {
+            transform: scale(0.95);
+        }
+
+        .notification-bell:hover .notification-badge {
+            animation: pulse 0.6s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Scroll Bar Styling */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.5);
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top top-nav">
+        <div class="container-fluid">
+            <button class="btn btn-toggle-sidebar me-3" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-anchor me-2"></i>MarineX Admin
+            </a>
+
+            <div class="navbar-nav ms-auto d-flex flex-row">
+                <div class="nav-item dropdown me-3">
+                    <a class="nav-link dropdown-toggle notification-bell" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end notification-dropdown">
+                        <li><h6 class="dropdown-header">Notifications</h6></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-ship me-2"></i>New vessel arrival</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Agent registration pending</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-calendar me-2"></i>Booking confirmation needed</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-center" href="#">View all notifications</a></li>
+                    </ul>
+                </div>
+
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle user-profile" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                        <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><circle cx='20' cy='20' r='20' fill='%232c5aa0'/><circle cx='20' cy='16' r='6' fill='white'/><path d='M20 24c-6 0-12 3-12 8v8h24v-8c0-5-6-8-12-8z' fill='white'/></svg>" alt="Admin" class="user-avatar">
+                        Admin User
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <i class="fas fa-anchor"></i>
+                    <span>MarineX</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-section="dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="agent-management">
+                            <i class="fas fa-users"></i>
+                            <span>Agent Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="berth-management">
+                            <i class="fas fa-ship"></i>
+                            <span>Berth Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="booking-management">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Booking Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="worker-management">
+                            <i class="fas fa-hard-hat"></i>
+                            <span>Worker Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="view-schedule">
+                            <i class="fas fa-clock"></i>
+                            <span>View Schedule</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="payment-details">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Payment Details</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+  <div class="demo-content" id="bookingManagementSection">
+    <h2>Booking Management</h2>
+
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered" id="bookingsTable">
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Vessel Name</th>
+            <th>Berth</th>
+            <th>Services</th>
+            <th>Purpose</th>
+            <th>Booking Date</th>
+            <th>End Date</th>
+            <th>Total Price ($)</th>
+            <th>Status</th>
+            <th>Assign Workers</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="bookingsTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+        </main>
+        <!-- Assign Workers Modal -->
+<div class="modal fade" id="assignWorkerModal" tabindex="-1" aria-labelledby="assignWorkerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="assignWorkerModalLabel">Assign Workers</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="assignWorkerForm">
+          <input type="hidden" id="modalBookingId">
+          <div class="mb-3">
+            <label for="workerSelect" class="form-label">Select Worker</label>
+            <select class="form-select" id="workerSelect" required>
+              <!-- Worker options will be loaded dynamically -->
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="assignedDate" class="form-label">Assigned Date</label>
+            <input type="date" class="form-control" id="assignedDate" value="">
+          </div>
+          <button type="submit" class="btn btn-primary">Assign Worker</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+
+    <!-- JavaScript for Navbar and Sidebar Functionality -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+ // ================= Sidebar & Navigation =================
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+
+    const sectionToFile = {
+        "dashboard": "admin-dashboard.html",
+        "agent-management": "agent-management.html",
+        "berth-management": "berth-management.html",
+        "booking-management": "booking-management.html",
+        "worker-management": "worker-management.html",
+        "view-schedule": "view-schedule.html",
+        "payment-details": "payment-details.html"
+    };
+
+    // Sidebar toggle
+    sidebarToggle.addEventListener('click', () => {
+        if (window.innerWidth > 1200) {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+        } else {
+            sidebar.classList.toggle('show');
+        }
+    });
+
+    // Sidebar nav link clicks
+    document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.sidebar-nav .nav-link').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+
+            const section = link.dataset.section;
+            const file = sectionToFile[section];
+            if (file) window.location.href = `/Frontend/pages/admin/${file}`;
+        });
+    });
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 1200 && !sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+            sidebar.classList.remove('show');
+        }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 1200) {
+            sidebar.classList.remove('show');
+        } else {
+            sidebar.classList.remove('collapsed');
+            mainContent.classList.remove('expanded');
+        }
+    });
+});
+// ======= Fixed JS (paste into your <script> block) =======
+
+/* --- Configuration --- */
+const API_BOOKINGS = "http://localhost:8080/api/bookings";
+const API_VESSELS = "http://localhost:8080/api/vessels";
+const API_BERTHS = "http://localhost:8080/api/berths";
+const API_SERVICES = "http://localhost:8080/api/services";
+const API_WORKERS = "http://localhost:8080/api/workers";
+const API_ASSIGNMENTS = "http://localhost:8080/api/worker-assignments"; // adjust if your controller path differs
+
+/* --- Auth helper --- */
+function getAuthHeaders() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    // Force login if token missing
+    alert("You must log in first!");
+    window.location.href = "login.html";
+    throw new Error("No auth token");
+  }
+  return {
+    "Authorization": `Bearer ${token}`,
+    "Content-Type": "application/json"
+  };
+}
+
+/* --- Data maps & lists --- */
+const vesselMap = new Map();
+const berthMap = new Map();
+const serviceMap = new Map();
+let workersList = []; // array of WorkerDTOs
+
+/* --- Load reference data --- */
+async function loadVessels() {
+  try {
+    const res = await fetch(API_VESSELS, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error(`Vessels fetch failed: ${res.status}`);
+    const data = await res.json();
+    vesselMap.clear();
+    (Array.isArray(data) ? data : (data.data || [])).forEach(v => vesselMap.set(v.vesselId ?? v.id, v.name ?? v.fullName ?? v.vesselName));
+  } catch (err) {
+    console.error("loadVessels:", err);
+  }
+}
+
+async function loadBerths() {
+  try {
+    const res = await fetch(API_BERTHS, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error(`Berths fetch failed: ${res.status}`);
+    const data = await res.json();
+    berthMap.clear();
+    (Array.isArray(data) ? data : (data.data || [])).forEach(b => berthMap.set(b.berthId ?? b.id, { number: b.berthNumber, price: Number(b.price || 0) }));
+  } catch (err) {
+    console.error("loadBerths:", err);
+  }
+}
+
+async function loadServices() {
+  try {
+    const res = await fetch(API_SERVICES, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error(`Services fetch failed: ${res.status}`);
+    let data = await res.json();
+    if (data && data.data && Array.isArray(data.data)) data = data.data;
+    (Array.isArray(data) ? data : []).forEach(s => serviceMap.set(s.serviceId ?? s.id, s.name));
+  } catch (err) {
+    console.error("loadServices:", err);
+  }
+}
+
+/* --- Load workers --- */
+async function loadWorkers() {
+  try {
+    const res = await fetch(API_WORKERS, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error(`Workers fetch failed: ${res.status}`);
+    let data = await res.json();
+    // backend might wrap list in { data: [...] }
+    if (data && data.data && Array.isArray(data.data)) data = data.data;
+    if (!Array.isArray(data)) {
+      console.warn("Unexpected workers response shape:", data);
+      workersList = [];
+      return;
+    }
+    workersList = data;
+    console.log("Workers loaded:", workersList);
+    // If the assign-worker modal select exists and is visible/populated earlier, update it too
+    populateWorkerSelect(document.getElementById('workerSelect'));
+  } catch (err) {
+    console.error("loadWorkers:", err);
+    workersList = [];
+  }
+}
+
+/* --- Utility to populate worker <select> --- */
+function populateWorkerSelect(selectEl) {
+  if (!selectEl) return;
+  selectEl.innerHTML = ""; // clear
+  if (!workersList || workersList.length === 0) {
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = "No workers available";
+    selectEl.appendChild(opt);
+    return;
+  }
+
+  workersList.forEach(w => {
+    const opt = document.createElement("option");
+    opt.value = w.workerId ?? "";
+    // Show "FullName (Specialization)"
+    const workerName = w.fullName ?? `Worker ${opt.value}`;
+    const specialization = w.specialization ?? "";
+    opt.textContent = specialization ? `${workerName} (${specialization})` : workerName;
+    selectEl.appendChild(opt);
+  });
+}
+
+/* --- Load bookings and render table --- */
+async function loadBookings() {
+  try {
+    // Ensure reference data loaded so we can show names
+    await Promise.all([loadVessels(), loadBerths(), loadServices()]);
+    const res = await fetch(API_BOOKINGS, { method: "GET", headers: getAuthHeaders() });
+    if (!res.ok) throw new Error(`Bookings fetch failed: ${res.status}`);
+    const bookings = await res.json();
+    renderBookings(Array.isArray(bookings) ? bookings : (bookings.data || []));
+  } catch (err) {
+    console.error("loadBookings:", err);
+    alert("Failed to load bookings");
+  }
+}
+
+function renderBookings(bookings) {
+  const tbody = document.getElementById("bookingsTableBody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+
+  bookings.forEach((b, i) => {
+    const vesselName = vesselMap.get(b.vesselId) || b.vesselName || b.vesselId || "-";
+    const berthInfo = berthMap.get(b.berthId);
+    const berthName = berthInfo ? `Berth ${berthInfo.number}` : (b.berthNumber || b.berthId || "-");
+    const serviceNames = (b.serviceIds && b.serviceIds.length)
+      ? b.serviceIds.map(id => serviceMap.get(id) || id).join(", ")
+      : (b.services ? (b.services.map(s => s.name || s.serviceName).join(", ")) : "-");
+    const totalPrice = b.totalPrice ?? (berthInfo ? berthInfo.price + (b.services?.reduce((s, it) => s + (it.price || 0), 0) || 0) : 0);
+
+    // Status label
+    const statusLabel = `<span class="badge ${
+      b.status === "CONFIRMED" || b.status === "CONFIRM" ? "bg-success" :
+      b.status === "PENDING" ? "bg-warning text-dark" :
+      b.status === "COMPLETED" ? "bg-primary" : "bg-secondary"
+    }">${b.status}</span>`;
+
+    // Buttons: show ONLY Approve for PENDING, ONLY Complete for CONFIRMED
+    let actionButtons = "";
+    if (String(b.status).toUpperCase() === "PENDING") {
+      actionButtons = `<button class="btn btn-sm btn-success me-1" onclick="approveBooking(${b.bookingId})"><i class="fas fa-check-circle me-1"></i> Approve</button>`;
+    } else if (String(b.status).toUpperCase() === "CONFIRMED" || String(b.status).toUpperCase() === "CONFIRM") {
+      actionButtons = `<button class="btn btn-sm btn-primary" onclick="completeBooking(${b.bookingId})"><i class="fas fa-flag-checkered me-1"></i> Complete</button>`;
+    }
+
+    const assignWorkerBtn = `<button class="btn btn-sm btn-info" onclick="assignWorkers(${b.bookingId})"><i class="fas fa-hard-hat me-1"></i> Assign</button>`;
+
+
+    tbody.insertAdjacentHTML("beforeend", `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${escapeHtml(vesselName)}</td>
+        <td>${escapeHtml(berthName)}</td>
+        <td>${escapeHtml(serviceNames)}</td>
+        <td>${escapeHtml(b.purpose || "")}</td>
+        <td>${escapeHtml(b.bookingDate || "")}</td>
+        <td>${escapeHtml(b.endDate || "")}</td>
+        <td>${escapeHtml(totalPrice)}</td>
+        <td>${statusLabel}</td>
+        <td class="text-center">${assignWorkerBtn}</td>
+        <td class="text-center">${actionButtons}</td>
+      </tr>
+    `);
+  });
+}
+
+/* very small helper to avoid injecting raw HTML from data */
+function escapeHtml(v) {
+  if (v == null) return "";
+  return String(v)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+/* --- Booking action helpers --- */
+async function approveBooking(id) {
+  if (!confirm("Approve this booking?")) return;
+  try {
+    const res = await fetch(`${API_BOOKINGS}/approve/${id}`, { method: "PUT", headers: getAuthHeaders() });
+    if (!res.ok) throw new Error(`Approve failed: ${res.status}`);
+    alert("Booking approved!");
+    await loadBookings();
+  } catch (err) {
+    console.error("approveBooking:", err);
+    alert("Could not approve booking");
+  }
+}
+
+async function completeBooking(id) {
+  if (!confirm("Mark this booking as completed?")) return;
+  try {
+    const res = await fetch(`${API_BOOKINGS}/complete/${id}`, { method: "PUT", headers: getAuthHeaders() });
+    if (!res.ok) throw new Error(`Complete failed: ${res.status}`);
+    alert("Booking completed!");
+    await loadBookings();
+  } catch (err) {
+    console.error("completeBooking:", err);
+    alert("Could not complete booking");
+  }
+}
+
+/* --- Assign worker: open modal, populate select, submit --- */
+function openAssignModal(bookingId) {
+  const modalEl = document.getElementById('assignWorkerModal');
+  if (!modalEl) {
+    alert("Assign modal element not found in DOM.");
+    return;
+  }
+  const modal = new bootstrap.Modal(modalEl);
+
+  // populate booking id hidden
+  document.getElementById('modalBookingId').value = bookingId;
+
+  // ensure workers loaded (if not, load now)
+  if (!workersList || workersList.length === 0) {
+    loadWorkers().then(() => {
+      populateWorkerSelect(document.getElementById('workerSelect'));
+    });
+  } else {
+    populateWorkerSelect(document.getElementById('workerSelect'));
+  }
+
+  // default date to today
+  const assignedDateInput = document.getElementById('assignedDate');
+  if (assignedDateInput) assignedDateInput.value = new Date().toISOString().slice(0, 10);
+
+  modal.show();
+}
+
+// wrapper called from button in table
+function assignWorkers(bookingId) {
+  // If your backend expects bookingServiceId (not bookingId), you must map bookingId => bookingServiceId here.
+  // For now we pass bookingId as bookingServiceId (adjust if necessary)
+  openAssignModal(bookingId);
+}
+
+// handle assignment form submission
+document.addEventListener("submit", async (evt) => {
+  const form = evt.target;
+  if (form && form.id === "assignWorkerForm") {
+    evt.preventDefault();
+
+    const bookingId = document.getElementById('modalBookingId').value;
+    const workerId = document.getElementById('workerSelect').value;
+    const assignedDate = document.getElementById('assignedDate').value;
+
+    if (!workerId) {
+      alert("Please select a worker");
+      return;
+    }
+
+    // payload: backend expects booking_service_id (FK) — adapt if needed
+    const payload = {
+      bookingServiceId: Number(bookingId), // <-- change this mapping if you have a BookingService entity to reference
+      workerId: Number(workerId),
+      assignedDate: assignedDate || new Date().toISOString().slice(0,10)
+    };
+
+    try {
+      const res = await fetch(API_ASSIGNMENTS, {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const text = await res.text().catch(()=>"");
+        throw new Error(`Assign failed: ${res.status} ${text}`);
+      }
+      alert("Worker assigned successfully!");
+      bootstrap.Modal.getInstance(document.getElementById('assignWorkerModal')).hide();
+      await loadBookings();
+    } catch (err) {
+      console.error("assignWorkerForm submit:", err);
+      alert("Could not assign worker. See console for details.");
+    }
+  }
+});
+
+/* --- Initialization --- */
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    // load workers first (so dropdowns are ready), then other refs and bookings
+    await loadWorkers();
+    await Promise.all([loadVessels(), loadBerths(), loadServices()]);
+    await loadBookings();
+  } catch (err) {
+    console.error("init error:", err);
+  }
+});
+    </script>
+</body>
+</html>

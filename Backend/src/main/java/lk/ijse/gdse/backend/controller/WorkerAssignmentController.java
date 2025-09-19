@@ -1,4 +1,4 @@
-package lk.ijse.gdse.backend.service.impl;
+package lk.ijse.gdse.backend.controller;
 
 import lk.ijse.gdse.backend.dto.WorkerAssignmentDTO;
 import lk.ijse.gdse.backend.service.WorkerAssignmentService;

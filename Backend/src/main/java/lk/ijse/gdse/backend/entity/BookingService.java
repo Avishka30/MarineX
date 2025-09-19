@@ -2,6 +2,9 @@ package lk.ijse.gdse.backend.entity;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "booking_service")
 public class BookingService {
@@ -17,6 +20,9 @@ public class BookingService {
     @ManyToOne
     @JoinColumn(name = "service_id", nullable = false)
     private Services service;
+
+    @OneToMany(mappedBy = "bookingService")
+    private Set<WorkerAssignment> assignments = new HashSet<>();
 
     // Constructors
     public BookingService() {}

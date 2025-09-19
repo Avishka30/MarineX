@@ -3,6 +3,9 @@ package lk.ijse.gdse.backend.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "workers")
 public class Worker {
@@ -25,7 +28,12 @@ public class Worker {
     private Specialization specialization;
 
     @Column(nullable = false)
-    private String status; // Active / Inactive
+    private String status;// Active / Inactive
+
+    // Optional: list of assignments
+    @OneToMany(mappedBy = "worker")
+    private Set<WorkerAssignment> assignments = new HashSet<>();
+
 
     // --- Constructors ---
     public Worker() {
