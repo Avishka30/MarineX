@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harbor Management Agent Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --secondary-blue: #1e40af;
+            --light-blue: #3b82f6;
+            --bg-gray: #f8f9fa;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --card-bg: #ffffff;
+            --border-color: #e5e7eb;
+        }
+
+        [data-bs-theme="dark"] {
+            --primary-blue: #3b82f6;
+            --secondary-blue: #2563eb;
+            --light-blue: #60a5fa;
+            --bg-gray: #111827;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --card-bg: #1f2937;
+            --border-color: #374151;
+        }
+        
+        .navbar-custom {
+            background-color: var(--primary-blue) !important;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            color: white !important;
+        }
+        
+        .nav-link {
+            color: #bfdbfe !important;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: white !important;
+            background-color: var(--secondary-blue);
+            border-radius: 6px;
+        }
+        
+        .dropdown-toggle::after {
+            display: none;
+        }
+        
+        .profile-avatar {
+            width: 32px;
+            height: 32px;
+            background-color: var(--light-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .stat-card {
+            transition: transform 0.2s ease;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .quick-access-btn {
+            border: 2px solid var(--border-color);
+            background: var(--card-bg);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        
+        .quick-access-btn:hover {
+            border-color: var(--light-blue);
+            background-color: var(--primary-blue);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .quick-access-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .welcome-section {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section-content {
+            display: none;
+        }
+        
+        .section-content.active {
+            display: block;
+        }
+        
+        body {
+            background-color: var(--bg-gray);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #bfdbfe;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .text-primary-custom {
+            color: var(--text-primary) !important;
+        }
+
+        .text-secondary-custom {
+            color: var(--text-secondary) !important;
+        }
+
+        .welcome-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body data-bs-theme="light">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid">
+            <!-- Brand -->
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="fas fa-anchor me-2"></i>
+                MarineX Agent-Dashboard
+            </a>
+            
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Navigation Items -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+               <ul class="navbar-nav me-auto">
+    <li class="nav-item">
+        <a class="nav-link active px-3" href="agent-dashboard.html">
+            Dashboard
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link px-3" href="agent-booking.html">
+            <i class="fas fa-calendar me-1"></i>
+            Bookings
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link px-3" href="vessel-management.html">
+            <i class="fas fa-ship me-1"></i>
+            Vessels
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link px-3" href="payment-history.html">
+            <i class="fas fa-credit-card me-1"></i>
+            Payment History
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link px-3" href="others.html">
+            <i class="fas fa-ellipsis-h me-1"></i>
+            Others
+        </a>
+    </li>
+</ul>
+
+                <!-- Profile Section -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <button class="theme-toggle me-3" onclick="toggleTheme()">
+                            <i class="fas fa-moon" id="theme-icon"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-bell"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <div class="profile-avatar me-2">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span class="d-none d-md-block">Agent</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user me-2"></i>
+                                    Profile Update
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="#">
+                                    <i class="fas fa-sign-out-alt me-2"></i>
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <div class="card mt-4">
+    <div class="card-header">
+        <h5>Your Payment History</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="paymentsTableBody">
+                <!-- Payments will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // Load saved theme
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            setTheme(savedTheme);
+        });
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            setTheme(newTheme);
+        }
+
+        function setTheme(theme) {
+            document.body.setAttribute('data-bs-theme', theme);
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (theme === 'dark') {
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                themeIcon.className = 'fas fa-moon';
+            }
+            
+            // Save theme preference
+            localStorage.setItem('theme', theme);
+        }
+
+const currentPage = window.location.pathname.split("/").pop(); // e.g., "dashboard.html"
+document.querySelectorAll('.nav-link').forEach(link => {
+    if (link.getAttribute('href') === currentPage) {
+        link.classList.add('active');
+    } else {
+        link.classList.remove('active');
+    }
+});
+    document.addEventListener("DOMContentLoaded", () => {
+    const token = localStorage.getItem("token");
+    const agentId = localStorage.getItem("agentId");
+
+    if (!token || !agentId) {
+        alert("You must log in first!");
+        window.location.href = "login.html";
+        return;
+    }
+
+    loadAgentPayments(agentId, token);
+});
+
+function loadAgentPayments(agentId, token) {
+    fetch(`http://localhost:8080/api/payments/agent/${agentId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}` // if your backend uses JWT
+        }
+    })
+    .then(res => res.json())
+    .then(payments => {
+        const tableBody = document.getElementById("paymentsTableBody");
+        tableBody.innerHTML = "";
+
+        payments.forEach(p => {
+            const row = `
+                <tr>
+                    <td>${p.id}</td>
+                    <td>${p.amount}</td>
+                    <td>${p.paymentDate}</td>
+                    <td>${p.method}</td>
+                    <td>${p.status}</td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    })
+    .catch(err => console.error(err));
+}
+
+    </script>
+</body>
+</html>

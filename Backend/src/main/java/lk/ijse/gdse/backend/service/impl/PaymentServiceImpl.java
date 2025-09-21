@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -78,5 +80,41 @@ public class PaymentServiceImpl implements PaymentService {
 
         return dto;
     }
+
+    @Override
+    public List<PaymentDTO> getAllPayments() {
+        return paymentRepository.findAll()
+                .stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
+
+    @Override
+    public PaymentDTO getPaymentById(Long id) {
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Payment not found with id: " + id));
+        return mapToDTO(payment);
+    }
+
+    private PaymentDTO mapToDTO(Payment payment) {
+        PaymentDTO dto = new PaymentDTO();
+        dto.setId(payment.getId());
+        dto.setAmount(payment.getAmount());
+        dto.setMethod(payment.getMethod());
+        dto.setStatus(payment.getStatus());
+        dto.setPaymentDate(payment.getPaymentDate());
+        dto.setTransactionId(payment.getTransactionId());
+        dto.setBookingId(payment.getBooking().getBookingId());
+        return dto;
+    }
+
+    public List<PaymentDTO> getPaymentsByAgent(Long agentId) {
+        List<Payment> payments = paymentRepository.findByBookingAgentUserId(agentId);
+        return payments.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+
 
 }

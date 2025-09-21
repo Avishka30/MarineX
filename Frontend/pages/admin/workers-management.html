@@ -102,8 +102,8 @@
                 <li class="nav-item"><a class="nav-link" href="/Frontend/pages/admin/berth-management.html" data-section="berth-management"><i class="fas fa-ship"></i><span>Berth Management</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="/Frontend/pages/admin/admin-booking.html" data-section="booking-management"><i class="fas fa-calendar-check"></i><span>Booking Management</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="/Frontend/pages/admin/workers-management.html" data-section="worker-management"><i class="fas fa-hard-hat"></i><span>Worker Management</span></a></li>
-                <li class="nav-item"><a class="nav-link" href="#" data-section="view-schedule"><i class="fas fa-clock"></i><span>View Schedule</span></a></li>
-                <li class="nav-item"><a class="nav-link" href="#" data-section="payment-details"><i class="fas fa-credit-card"></i><span>Payment Details</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="/Frontend/pages/admin/Schedule.html" data-section="view-schedule"><i class="fas fa-clock"></i><span>View Schedule</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="/Frontend/pages/admin/admin-payment.html" data-section="payment-details"><i class="fas fa-credit-card"></i><span>Payment Details</span></a></li>
             </ul>
         </nav>
     </aside>
@@ -187,6 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     window.addEventListener('resize', ()=>{ if(window.innerWidth>1200){ sidebar.classList.remove('show'); } else { sidebar.classList.remove('collapsed'); mainContent.classList.remove('expanded'); } });
 });
+
 
 // CRUD Operations
 const apiBase = "http://localhost:8080/api/workers";
@@ -324,6 +325,92 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+// ===== MarineX Navbar & Sidebar Script =====
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+
+    // Sidebar toggle
+    sidebarToggle.addEventListener('click', () => {
+        if (window.innerWidth > 1200) {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+        } else {
+            sidebar.classList.toggle('show');
+        }
+    });
+
+    // Map section names to actual HTML files
+    const sectionToFile = {
+        "dashboard": "admin-dashboard.html",
+        "agent-management": "agent-management.html",
+        "berth-management": "berth-management.html",
+        "service-management": "service-management.html",
+        "booking-management": "admin-booking.html",
+        "worker-management": "workers-management.html",
+        "view-schedule": "Schedule.html",
+        "payment-details": "admin-payment.html"
+    };
+
+    // Sidebar navigation
+    const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Remove active class
+            navLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+
+            // Navigate to file
+            const section = this.dataset.section;
+            if (sectionToFile[section]) {
+                window.location.href = `/Frontend/pages/admin/${sectionToFile[section]}`;
+            }
+        });
+    });
+
+    // Close sidebar on outside click (mobile)
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 1200 &&
+            !sidebar.contains(e.target) &&
+            !sidebarToggle.contains(e.target)) {
+            sidebar.classList.remove('show');
+        }
+    });
+
+    // ===== Expose utility functions globally =====
+    window.MarineXNav = {
+        setActiveNavigation(sectionName) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.section === sectionName) {
+                    link.classList.add('active');
+                }
+            });
+        },
+
+        updateNotificationCount(count) {
+            const badge = document.querySelector('.notification-badge');
+            if (badge) {
+                badge.textContent = count;
+                badge.style.display = count > 0 ? 'flex' : 'none';
+            }
+        },
+
+        toggleSidebar() {
+            if (window.innerWidth > 1200) {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+            } else {
+                sidebar.classList.toggle('show');
+            }
+        }
+    };
+});
+
 
 
 </script>

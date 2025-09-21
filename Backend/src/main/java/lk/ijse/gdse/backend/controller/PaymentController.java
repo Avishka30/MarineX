@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/payments")
 public class PaymentController {
@@ -23,4 +25,28 @@ public class PaymentController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping
+    public ResponseEntity<List<PaymentDTO>> getAllPayments() {
+        return ResponseEntity.ok(paymentService.getAllPayments());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PaymentDTO> getPaymentById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(paymentService.getPaymentById(id));
+        } catch (RuntimeException ex) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/agent/{agentId}")
+    public ResponseEntity<List<PaymentDTO>> getPaymentsByAgent(@PathVariable Long agentId) {
+        try {
+            List<PaymentDTO> payments = paymentService.getPaymentsByAgent(agentId);
+            return ResponseEntity.ok(payments);
+        } catch (RuntimeException ex) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

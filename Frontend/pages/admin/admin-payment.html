@@ -384,12 +384,6 @@
                             <span>Berth Management</span>
                         </a>
                     </li>
-                     <li class="nav-item">
-                        <a class="nav-link" href="/Frontend/pages/admin/service-management.html" data-section="service-management">
-                            <i class="fas fa-credit-card"></i>
-                            <span>Service Management</span>
-                        </a>
-                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/Frontend/pages/admin/admin-booking.html" data-section="booking-management">
                             <i class="fas fa-calendar-check"></i>
@@ -419,281 +413,49 @@
         </aside>
 
         <!-- Main Content -->
-    <!-- Main Content -->
-<main class="main-content" id="mainContent">
-  <div class="demo-content">
-    <h2 class="mb-4"><i class="fas fa-concierge-bell me-2"></i>Service Management</h2>
+        <main class="main-content" id="mainContent">
+            <div class="demo-content" id="paymentSection">
+    <h2>Payment Details</h2>
 
-    <!-- Service Form -->
-    <div class="card mb-4">
-      <div class="card-header bg-primary text-white">
-        <i class="fas fa-plus-circle me-2"></i>Add / Update Service
-      </div>
-      <div class="card-body">
-        <form id="serviceForm">
-          <input type="hidden" id="serviceId">
-          <div class="row g-3">
+    <!-- Filter by Payment ID -->
+    <form id="filterPaymentForm" class="mb-4">
+        <div class="row g-3 align-items-end">
             <div class="col-md-4">
-              <label for="serviceName" class="form-label">Service Name</label>
-              <input type="text" id="serviceName" class="form-control" required>
+                <label for="paymentId" class="form-label">Filter by Payment ID</label>
+                <input type="number" id="paymentId" class="form-control" placeholder="Enter Payment ID">
             </div>
-            <div class="col-md-4">
-              <label for="serviceDescription" class="form-label">Description</label>
-              <input type="text" id="serviceDescription" class="form-control" required>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Search</button>
             </div>
-            <div class="col-md-4">
-              <label for="servicePrice" class="form-label">Price ($)</label>
-              <input type="number" id="servicePrice" class="form-control" step="0.01" min="0" required>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-secondary w-100" onclick="fetchPayments()">View All</button>
             </div>
-          </div>
-          <button type="submit" class="btn btn-success mt-3">Save Service</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Filters -->
-    <div class="card mb-4">
-      <div class="card-header bg-secondary text-white">
-        <i class="fas fa-filter me-2"></i>Filter Services
-      </div>
-      <div class="card-body">
-        <div class="row g-3">
-          <div class="col-md-4">
-            <input type="text" id="filterName" placeholder="Filter by name..." class="form-control">
-          </div>
-          <div class="col-md-3">
-            <input type="number" id="filterMinPrice" placeholder="Min Price" class="form-control" step="0.01" min="0">
-          </div>
-          <div class="col-md-3">
-            <input type="number" id="filterMaxPrice" placeholder="Max Price" class="form-control" step="0.01" min="0">
-          </div>
-          <div class="col-md-2 d-flex align-items-center">
-            <button id="clearFilters" class="btn btn-outline-secondary w-100">Clear</button>
-          </div>
         </div>
-      </div>
-    </div>
+    </form>
 
-    <!-- Service Table -->
-    <div class="card">
-      <div class="card-header bg-dark text-white">
-        <i class="fas fa-table me-2"></i>Services List
-      </div>
-      <div class="card-body p-0">
-        <table class="table table-striped mb-0">
-          <thead class="table-light">
-            <tr>
-              <th>#</th>
-              <th>Service Name</th>
-              <th>Description</th>
-              <th>Price ($)</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="servicesTableBody">
-            <tr>
-              <td colspan="5" class="text-center text-muted">No services available</td>
-            </tr>
-          </tbody>
+    <!-- Payments Table -->
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered" id="paymentsTable">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Booking ID</th>
+                    <th>Amount ($)</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
         </table>
-      </div>
     </div>
-  </div>
-</main>
+</div>
 
+        </main>
     </div>
 
     <!-- JavaScript for Navbar and Sidebar Functionality -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-
-        //crud operation for service management
-  // ======= Service Management Script =======
-const serviceForm = document.getElementById('serviceForm');
-const servicesTableBody = document.getElementById('servicesTableBody');
-const apiBase = 'http://localhost:8080/api/services';
-
-// Token from localStorage
-const token = localStorage.getItem('token');
-const fetchOptions = {
-    headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-    }
-};
-
-// ===== Fetch All Services =====
-async function fetchServices() {
-    try {
-        const res = await fetch(apiBase, fetchOptions);
-        if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
-        const { data } = await res.json();
-        renderTable(data);
-    } catch (err) {
-        console.error('Error fetching services:', err);
-        servicesTableBody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Failed to load services</td></tr>`;
-    }
-}
-
-// ===== Render Table =====
-function renderTable(services) {
-    servicesTableBody.innerHTML = '';
-    if (!services.length) {
-        servicesTableBody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">No services available</td></tr>`;
-        return;
-    }
-
-    services.forEach(service => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${service.serviceId}</td>
-            <td>${service.name}</td>
-            <td>${service.description}</td>
-            <td>${service.price?.toFixed(2) || '0.00'}</td>
-            <td>
-                <button class="btn btn-sm btn-info me-1" onclick="editService(${service.serviceId})">Edit</button>
-                <button class="btn btn-sm btn-danger" onclick="deleteService(${service.serviceId})">Delete</button>
-            </td>
-        `;
-        servicesTableBody.appendChild(row);
-    });
-}
-
-// ===== Add / Update Service =====
-serviceForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const serviceId = document.getElementById('serviceId').value;
-    const serviceDTO = {
-        name: document.getElementById('serviceName').value,
-        description: document.getElementById('serviceDescription').value,
-        price: parseFloat(document.getElementById('servicePrice').value)
-    };
-
-    try {
-        let method = 'POST';
-        let url = apiBase;
-
-        if (serviceId) {
-            method = 'PUT';
-            url = `${apiBase}/${serviceId}`;
-        }
-
-        const res = await fetch(url, {
-            method: method,
-            headers: fetchOptions.headers,
-            body: JSON.stringify(serviceDTO)
-        });
-
-        if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
-
-        // Reset form
-        serviceForm.reset();
-        document.getElementById('serviceId').value = '';
-        fetchServices();
-
-    } catch (err) {
-        console.error('Error saving service:', err);
-        alert('Failed to save service: ' + err.message);
-    }
-});
-
-// ===== Edit Service =====
-async function editService(id) {
-    try {
-        const res = await fetch(`${apiBase}/${id}`, fetchOptions);
-        if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
-        const { data } = await res.json();
-
-        // Populate form with existing data
-        document.getElementById('serviceId').value = data.serviceId; // ✅ Correct property
-        document.getElementById('serviceName').value = data.name;
-        document.getElementById('serviceDescription').value = data.description;
-        document.getElementById('servicePrice').value = data.price;
-
-        // Scroll form into view
-        serviceForm.scrollIntoView({ behavior: 'smooth' });
-
-    } catch (err) {
-        console.error('Error fetching service:', err);
-        alert('Failed to fetch service: ' + err.message);
-    }
-}
-
-// ===== Delete Service =====
-async function deleteService(id) {
-    if (!confirm('Are you sure you want to delete this service?')) return;
-
-    try {
-        const res = await fetch(`${apiBase}/${id}`, {
-            method: 'DELETE',
-            headers: fetchOptions.headers
-        });
-
-        if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
-        fetchServices();
-
-    } catch (err) {
-        console.error('Error deleting service:', err);
-        alert('Failed to delete service: ' + err.message);
-    }
-}
-
-// ===== Filters =====
-const searchNameInput = document.getElementById('filterName');
-const minPriceInput = document.getElementById('filterMinPrice');
-const maxPriceInput = document.getElementById('filterMaxPrice');
-const clearFiltersBtn = document.getElementById('clearFilters');
-
-async function applyFilters() {
-    try {
-        let services = [];
-
-        const name = searchNameInput.value.trim();
-        const minPrice = parseFloat(minPriceInput.value);
-        const maxPrice = parseFloat(maxPriceInput.value);
-
-        // Fetch filtered by name from backend if name exists
-        if (name) {
-            const res = await fetch(`${apiBase}/search?name=${encodeURIComponent(name)}`, fetchOptions);
-            if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
-            const { data } = await res.json();
-            services = data;
-        } else {
-            const res = await fetch(apiBase, fetchOptions);
-            if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
-            const { data } = await res.json();
-            services = data;
-        }
-
-        // Apply price filters client-side
-        if (!isNaN(minPrice)) services = services.filter(s => s.price >= minPrice);
-        if (!isNaN(maxPrice)) services = services.filter(s => s.price <= maxPrice);
-
-        renderTable(services);
-
-    } catch (err) {
-        console.error('Error applying filters:', err);
-        alert('Failed to apply filters: ' + err.message);
-    }
-}
-
-searchNameInput.addEventListener('input', applyFilters);
-minPriceInput.addEventListener('input', applyFilters);
-maxPriceInput.addEventListener('input', applyFilters);
-
-clearFiltersBtn.addEventListener('click', () => {
-    searchNameInput.value = '';
-    minPriceInput.value = '';
-    maxPriceInput.value = '';
-    fetchServices();
-});
-
-// ===== Initial Load =====
-fetchServices();
-
-
-        ///////////
         // Sidebar Toggle Functionality
         document.addEventListener('DOMContentLoaded', function() {
             const sidebarToggle = document.getElementById('sidebarToggle');
@@ -828,7 +590,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "booking-management": "admin-booking.html",
         "worker-management": "workers-management.html",
         "view-schedule": "Schedule.html",
-        "service-management": "service-management.html"
+        "payment-details": "admin-payment.html"
     };
 
     // Sidebar nav link clicks
@@ -871,7 +633,90 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-//logout
+        // === Payments CRUD ===
+const paymentsTableBody = document.querySelector('#paymentsTable tbody');
+const paymentApiBase = 'http://localhost:8080/api/payments'; // adjust if needed
+
+const token = localStorage.getItem('token');
+
+const fetchOptions = {
+    headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+    }
+};
+
+// Fetch all payments
+async function fetchPayments() {
+    try {
+        const res = await fetch(paymentApiBase, fetchOptions);
+        if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
+        const data = await res.json();
+        renderPaymentsTable(data);
+    } catch (err) {
+        console.error('Error fetching payments:', err);
+        alert('Failed to fetch payments: ' + err.message);
+    }
+}
+
+// Fetch payment by ID
+async function fetchPaymentById(id) {
+    try {
+        const res = await fetch(`${paymentApiBase}/${id}`, fetchOptions);
+        if (!res.ok) {
+            if (res.status === 404) {
+                renderPaymentsTable([]); // no results
+                alert('No payment found with this ID');
+                return;
+            }
+            throw new Error(res.status + ' ' + res.statusText);
+        }
+        const data = await res.json();
+        renderPaymentsTable([data]); // wrap single object in array
+    } catch (err) {
+        console.error('Error fetching payment:', err);
+        alert('Failed to fetch payment: ' + err.message);
+    }
+}
+
+// Render table rows
+function renderPaymentsTable(payments) {
+    paymentsTableBody.innerHTML = '';
+    if (!payments || payments.length === 0) {
+        paymentsTableBody.innerHTML = `<tr><td colspan="5" class="text-center">No payments found</td></tr>`;
+        return;
+    }
+
+    payments.forEach(payment => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${payment.id}</td>
+            <td>${payment.bookingId}</td>
+            <td>${payment.amount.toFixed(2)}</td>
+            <td>
+                <span class="badge ${payment.status === 'PAID' ? 'bg-success' : 'bg-warning'}">
+                    ${payment.status}
+                </span>
+            </td>
+            <td>${new Date(payment.paymentDate).toLocaleDateString()}</td>
+        `;
+        paymentsTableBody.appendChild(row);
+    });
+}
+
+// Handle filter form submit
+document.getElementById('filterPaymentForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const paymentId = document.getElementById('paymentId').value.trim();
+    if (paymentId) {
+        fetchPaymentById(paymentId);
+    } else {
+        alert('Please enter a Payment ID');
+    }
+});
+
+// Auto load all payments when page loads
+document.addEventListener("DOMContentLoaded", fetchPayments);
 
 document.addEventListener("DOMContentLoaded", () => {
     // Select the Logout link in the user dropdown
