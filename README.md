@@ -36,8 +36,6 @@ MarineX simplifies harbor management by combining user-friendly UI/UX with power
 - **Notifications:** Admin can notify agents about booking approvals or assigned tasks.
 <img width="1366" height="768" alt="Screenshot (120)" src="https://github.com/user-attachments/assets/bd3c225d-47b5-4fbf-847b-6ef49a3c8ed6" />
 
-
-
 ### Agent Features
 - **Secure Sign-in:** Agents sign in using their license code and wait for admin approval.
 - **Vessel Management:** Add, update, and view vessels.
@@ -85,13 +83,18 @@ Follow these steps to run the project locally.
 Clone the repository:
    git clone (https://github.com/Avishka30/MarineX.git)
 Configure the database in application.properties:
+
   spring.datasource.url=jdbc:mysql://localhost:3306/hms
   spring.datasource.username=your_username
   spring.datasource.password=your_password
   spring.jpa.hibernate.ddl-auto=update
+  
 Run the backend application:
+
   mvn spring-boot:run
   Run the frontend: Open the index.html file (Use Live Server)
+  
 Additional Configurations -
   Stripe API Key → Add your API key in the Stripe Payment.
-    Youtube URL - https://youtu.be/MRz4YHdByGg?si=FRhVQxId77bWElTh
+    Youtube URL -
+    https://youtu.be/MRz4YHdByGg?si=FRhVQxId77bWElTh
