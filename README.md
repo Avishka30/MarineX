@@ -76,17 +76,25 @@ MarineX simplifies harbor management by combining user-friendly UI/UX with power
 5. **Payment Processing:** Stripe integration handles agent payments, triggers invoice generation, and updates booking status.
 6. **Email Notifications:** Admin actions trigger automated emails for agents.
 
+    Youtube URL -
+   
+    https://youtu.be/MRz4YHdByGg?si=FRhVQxId77bWElTh
+
 ## Setup Instructions
 Follow these steps to run the project locally.
 
 # Full Project
 Clone the repository:
    git clone (https://github.com/Avishka30/MarineX.git)
+   
 Configure the database in application.properties:
 
   spring.datasource.url=jdbc:mysql://localhost:3306/hms
+  
   spring.datasource.username=your_username
+  
   spring.datasource.password=your_password
+  
   spring.jpa.hibernate.ddl-auto=update
   
 Run the backend application:
@@ -95,6 +103,6 @@ Run the backend application:
   Run the frontend: Open the index.html file (Use Live Server)
   
 Additional Configurations -
+
   Stripe API Key → Add your API key in the Stripe Payment.
-    Youtube URL -
-    https://youtu.be/MRz4YHdByGg?si=FRhVQxId77bWElTh
+   
