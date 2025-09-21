@@ -430,7 +430,8 @@
 
     <!-- JavaScript for Navbar and Sidebar Functionality -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script>
+    <script src="/Frontend/js/agent-management.js"></script>
+    <!-- <script>
 
         //fetch code 
      const agentContainer = document.getElementById('agentCardsContainer');
@@ -473,6 +474,7 @@ function renderAgents(agents) {
                     <img src="${agent.profileImageUrl || 'https://via.placeholder.com/80'}" class="rounded-circle mb-3" width="80" height="80" alt="Profile">
                     <h5 class="card-title">${agent.fullName}</h5>
                     <p class="card-text text-muted">${agent.email}</p>
+                    <p class="card-text"><strong>Reg. Number:</strong> ${agent.licenseCode || '-'}</p>
                     <div class="d-flex justify-content-center gap-2">
                         <button class="btn btn-success btn-approve" data-id="${agent.userId}">Approve</button>
                         <button class="btn btn-danger btn-reject" data-id="${agent.userId}">Reject</button>
@@ -753,6 +755,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
-    </script>
+     </script> -->
 </body>
 </html>
