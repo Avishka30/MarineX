@@ -64,4 +64,4 @@ MarineX simplifies harbor management by combining user-friendly UI/UX with power
 5. **Payment Processing:** Stripe integration handles agent payments, triggers invoice generation, and updates booking status.
 6. **Email Notifications:** Admin actions trigger automated emails for agents.
 
-  Youtube URL -
+  Youtube URL - https://youtu.be/MRz4YHdByGg?si=FRhVQxId77bWElTh
